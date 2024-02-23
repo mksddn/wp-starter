@@ -1,0 +1,10 @@
+composer.phar
+/vendor/
+
+/core/
+
+.env
+*.lock
+/content/plugins
+
+.DS_Store

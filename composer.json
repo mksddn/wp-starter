@@ -1,0 +1,38 @@
+{
+	"name": "cb/wp-starter",
+	"description": "Install wordpress by composer",
+	"require": {
+		"composer/installers": "*",
+		"johnpbloch/wordpress": "*",
+		"wpackagist-plugin/cyr2lat": "*",
+		"wpackagist-plugin/advanced-custom-fields": "*",
+		"wpackagist-plugin/view-admin-as": "*",
+		"wpackagist-plugin/turn-comments-off": "*"
+	},
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "https://wpackagist.org"
+		}
+	],
+	"extra": {
+		"installer-paths": {
+			"content/mu-plugins/{$name}/": [
+				"type:wordpress-muplugin"
+			],
+			"content/plugins/{$name}/": [
+				"type:wordpress-plugin"
+			],
+			"content/themes/{$name}/": [
+				"type:wordpress-theme"
+			]
+		},
+		"wordpress-install-dir": "core"
+	},
+	"config": {
+		"allow-plugins": {
+			"johnpbloch/wordpress-core-installer": true,
+			"composer/installers": true
+		}
+	}
+}
