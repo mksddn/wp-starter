@@ -14,11 +14,12 @@ fi
 
 
 # именуем тему
-# НЕ ЗАБУДЬ УКАЗАТЬ В .ENV
+# НЕ ЗАБУДЬ УКАЗАТЬ НАЗВАНИЕ В .ENV
 mv content/themes/* content/themes/${THEME_SLUG}
+touch content/themes/${THEME_SLUG}/style.css
 echo "/**
- * Theme Name: ${THEME_SLUG}
- */" | cat - content/themes/${THEME_SLUG}/style.css > temp && mv temp content/themes/${THEME_SLUG}/style.css
+* Theme Name: ${THEME_SLUG}
+*/" | cat - content/themes/${THEME_SLUG}/style.css > temp && mv temp content/themes/${THEME_SLUG}/style.css
 
 
 # проверяем установлен ли composer
@@ -47,30 +48,30 @@ else
 fi
 
 # создаем wp-config
-# НУЖНО РАЗРЕШИТЬ ДОСТУП К БД НА СТОРОНЕ СЕРВЕРА!!!
+# НУЖНО РАЗРЕШИТЬ УДАЛЕННЫЙ ДОСТУП К БД НА СТОРОНЕ СЕРВЕРА!!!
 wp config create --dbhost=${DB_HOST} --dbname=${DB_NAME} --dbuser=${DB_USER} --dbpass=${DB_PASSWORD} --extra-php <<PHP
 define('WP_CONTENT_DIR', dirname(__DIR__, 1) . '/content');
-define('WP_CONTENT_URL', '/content');
-define( 'WP_DEBUG', true );
-define( 'WP_DEBUG_LOG', true );
+define('WP_CONTENT_URL', '${SITE_HOST}' . '/content');
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
 PHP
 
 # устанавливаем wordpress
 echo "${GREEN}Installing WordPress may take time.${NC}"
-wp core install --url=${SITE_URL} --title=${SITE_TITLE} --admin_user=${ADMIN_USER} --admin_password=${ADMIN_PASSWORD} --admin_email=${ADMIN_EMAIL}
+wp core install --url=${SITE_HOST} --title=${SITE_TITLE} --admin_user=${ADMIN_USER} --admin_password=${ADMIN_PASSWORD} --admin_email=${ADMIN_EMAIL} --skip-email
 
 # настраиваем cms
-# пермалинки
-# wp rewrite flush
-wp rewrite structure '/%postname%/'
-# домашняя сраница
-wp post update 2 --post_title=Home --post_name=home
-wp option update page_on_front 2
-wp option update show_on_front page
 # активируем тему
 wp theme activate ${THEME_SLUG}
 # активируем плагины
 wp plugin activate --all
+# пермалинки
+# wp rewrite flush
+wp rewrite structure '/%postname%/'
+# домашняя страница
+wp post update 2 --post_title=Home --post_name=home
+wp option update page_on_front 2
+wp option update show_on_front page
 
 # запускаем локальный сервер
 wp server

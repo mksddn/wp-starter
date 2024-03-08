@@ -2,18 +2,21 @@
 	"name": "cb/wp-starter",
 	"description": "Install wordpress by composer",
 	"require": {
+		"php": ">=7.2",
 		"composer/installers": "*",
 		"johnpbloch/wordpress": "*",
 		"wpackagist-plugin/cyr2lat": "*",
-		"wpackagist-plugin/advanced-custom-fields": "*",
-		"wpackagist-plugin/view-admin-as": "*",
-		"wpackagist-plugin/turn-comments-off": "*"
+		"wpengine/advanced-custom-fields-pro": "*"
 	},
 	"repositories": [
 		{
 			"type": "composer",
 			"url": "https://wpackagist.org"
-		}
+		},
+		{
+      "type": "composer",
+      "url": "https://connect.advancedcustomfields.com"
+    }
 	],
 	"extra": {
 		"installer-paths": {
@@ -32,7 +35,18 @@
 	"config": {
 		"allow-plugins": {
 			"johnpbloch/wordpress-core-installer": true,
-			"composer/installers": true
+			"composer/installers": true,
+			"dealerdirect/phpcodesniffer-composer-installer": true
 		}
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
+		"squizlabs/php_codesniffer": "^3.9",
+		"wp-coding-standards/wpcs": "^3.0",
+		"phpcompatibility/phpcompatibility-wp": "*"
+	},
+	"scripts": {
+		"phpcs": "phpcs --standard=./phpcs.xml",
+		"phpcbf": "phpcbf --standard=./phpcs.xml"
 	}
 }

@@ -7,4 +7,8 @@ composer.phar
 *.lock
 /content/plugins
 
+auth.json
+
+.phpcs.cache
+
 .DS_Store
