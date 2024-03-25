@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The WordPress Must Use Plugins is an fine way to
  *   include without doings in back end
@@ -24,20 +25,20 @@
  */
 
 // If this file is called directly, abort.
-if ( ! function_exists( 'add_filter' ) ) {
-	header( 'Status: 403 Forbidden' );
-	header( 'HTTP/1.1 403 Forbidden' );
+if (!function_exists('add_filter')) {
+	header('Status: 403 Forbidden');
+	header('HTTP/1.1 403 Forbidden');
 	echo "Hi there! I'm just a part of plugin, not much I can do when called directly.";
 	exit();
 }
 
-if ( ! is_blog_installed() ) {
+if (!is_blog_installed()) {
 	return;
 }
 
 add_action(
 	'muplugins_loaded',
-	[ must_use_loader::get_instance(), 'plugin_setup' ]
+	[must_use_loader::get_instance(), 'plugin_setup']
 );
 
 /**
@@ -47,7 +48,8 @@ add_action(
  * @package Must-Use Loader
  * @author  Frank Bültge
  */
-class must_use_loader {
+class must_use_loader
+{
 
 	/**
 	 * If the plugin fails to find your wpmu plugin directory,
@@ -81,11 +83,12 @@ class must_use_loader {
 	 * @since  0.0.1
 	 * @return must_use_loader
 	 */
-	public static function get_instance() {
+	public static function get_instance()
+	{
 
 		static $instance;
 
-		if ( NULL === $instance ) {
+		if (NULL === $instance) {
 			$instance = new self();
 		}
 
@@ -98,10 +101,11 @@ class must_use_loader {
 	 * @since  0.0.1
 	 * @return void
 	 */
-	public function plugin_setup() {
+	public function plugin_setup()
+	{
 
 		// Delete transient cache, if active on the must use plugin list in network view
-		add_action( 'load-plugins.php', [ $this, 'delete_subdir_mu_plugin_cache' ] );
+		add_action('load-plugins.php', [$this, 'delete_subdir_mu_plugin_cache']);
 
 		// Load plugins, count and store them.
 		$this->subdir_mu_plugins_files();
@@ -109,10 +113,10 @@ class must_use_loader {
 		$this->include_subdir_plugins();
 
 		// Change the plugin view value
-		add_action( 'admin_footer-plugins.php', [ $this, 'change_view_values' ], 11 );
+		add_action('admin_footer-plugins.php', [$this, 'change_view_values'], 11);
 
 		// Add row and content for all plugins, there include via this plugin.
-		add_action( 'after_plugin_row_must_use_loader.php', [ $this, 'list_subdir_mu_plugins' ] );
+		add_action('after_plugin_row_must_use_loader.php', [$this, 'list_subdir_mu_plugins']);
 	}
 
 	/**
@@ -124,11 +128,12 @@ class must_use_loader {
 	 *
 	 * @return bool
 	 */
-	private function validate_plugins( $plugins ) {
+	private function validate_plugins($plugins)
+	{
 
-		foreach ( $plugins as $plugin_file ) {
+		foreach ($plugins as $plugin_file) {
 			// Validate plugins still exist
-			if ( ! is_readable( WPMU_PLUGIN_DIR . '/' . $plugin_file ) ) {
+			if (!is_readable(WPMU_PLUGIN_DIR . '/' . $plugin_file)) {
 				$plugins = FALSE;
 				break;
 			}
@@ -143,9 +148,10 @@ class must_use_loader {
 	 * @since  2017-01-04
 	 * @return bool
 	 */
-	private function is_debug_status() {
+	private function is_debug_status()
+	{
 
-		return defined( 'WP_DEBUG' ) && WP_DEBUG;
+		return defined('WP_DEBUG') && WP_DEBUG;
 	}
 
 	/**
@@ -153,9 +159,10 @@ class must_use_loader {
 	 *
 	 * @return mixed
 	 */
-	private function get_transient() {
+	private function get_transient()
+	{
 
-		return get_site_transient( 'subdir_wpmu_plugins' );
+		return get_site_transient('subdir_wpmu_plugins');
 	}
 
 	/**
@@ -165,30 +172,31 @@ class must_use_loader {
 	 * @since   0.0.1
 	 * @version 2017-01-06
 	 */
-	public function subdir_mu_plugins_files() {
+	public function subdir_mu_plugins_files()
+	{
 
 		// No caching, then load
-		if ( $this->is_debug_status() ) {
+		if ($this->is_debug_status()) {
 			$plugins = $this->get_mu_plugins();
 
 			// Set cache for subdirectory plugins
-			set_site_transient( 'subdir_wpmu_plugins', $plugins );
+			set_site_transient('subdir_wpmu_plugins', $plugins);
 		} else {
 			// Get cached plugins.
 			$plugins = $this->get_transient();
 
 			// Refresh if the transient is wrong.
-			if ( ! $plugins ) {
+			if (!$plugins) {
 				$plugins = $this->get_mu_plugins();
 			}
 
 			// Debug is false, validate plugins from cache.
-			$plugins = $this->validate_plugins( $plugins );
+			$plugins = $this->validate_plugins($plugins);
 		}
 
 		$this->plugins = $plugins;
 		// Set counter for plugins.
-		$this->mustuse_total = (int) count( $plugins );
+		$this->mustuse_total = (int) count($plugins);
 	}
 
 	/**
@@ -196,21 +204,22 @@ class must_use_loader {
 	 *
 	 * @return array
 	 */
-	public function get_mu_plugins() {
+	public function get_mu_plugins()
+	{
 
 		// Invalid cache
 		$plugins = [];
 
 		// Check for the optional defined var of the class
-		if ( ! self::$wpmu_plugin_dir ) {
+		if (!self::$wpmu_plugin_dir) {
 			// Relative path to single plugin directory
-			$mu_plugins_folder = explode( '/', WPMU_PLUGIN_DIR );
+			$mu_plugins_folder = explode('/', WPMU_PLUGIN_DIR);
 			// Use last value
-			self::$wpmu_plugin_dir = '/../' . end( $mu_plugins_folder );
+			self::$wpmu_plugin_dir = '/../' . end($mu_plugins_folder);
 		}
 
 		// get_plugins is not included by default
-		if ( ! function_exists( 'get_plugins' ) ) {
+		if (!function_exists('get_plugins')) {
 			require ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
@@ -218,13 +227,13 @@ class must_use_loader {
 		 * Get all plugins.
 		 * You can remove plugins detected by the "Must Use Loader" from the loading process by use the filter hook.
 		 */
-		$mu_plugins = apply_filters( 'must_use_loader.mu_plugins', get_plugins( self::$wpmu_plugin_dir ) );
+		$mu_plugins = apply_filters('must_use_loader.mu_plugins', get_plugins(self::$wpmu_plugin_dir));
 
 		// The function array_keys() is ugly and a performance impact.
-		foreach ( $mu_plugins as $plugin_file => $not_used ) {
+		foreach ($mu_plugins as $plugin_file => $not_used) {
 			// Skip files directly at root
 			// And skip folders starting with an underscore as we want to turn those plugins off.
-			if ( '.' !== dirname( $plugin_file ) && dirname( $plugin_file )[0] !== '_' ) {
+			if ('.' !== dirname($plugin_file) && dirname($plugin_file)[0] !== '_') {
 				$plugins[] = $plugin_file;
 			}
 		}
@@ -238,12 +247,13 @@ class must_use_loader {
 	 * @since   0.0.1
 	 * @return  void
 	 */
-	public function include_subdir_plugins() {
+	public function include_subdir_plugins()
+	{
 
 		// Include all plugins in subdirectories
-		foreach ( $this->plugins as $plugin_file ) {
+		foreach ($this->plugins as $plugin_file) {
 			require_once WPMU_PLUGIN_DIR . '/' . $plugin_file;
-			wp_register_plugin_realpath( WPMU_PLUGIN_DIR . '/' . $plugin_file );
+			wp_register_plugin_realpath(WPMU_PLUGIN_DIR . '/' . $plugin_file);
 			// Currently not possible, WP validate plugins, there are active only via path WP_PLUGIN_DIR.
 			//$this->set_network_plugin_option( $plugin_file );
 		}
@@ -254,11 +264,12 @@ class must_use_loader {
 	 *
 	 * @param string $plugin File path.
 	 */
-	public function set_network_plugin_option( $plugin ) {
+	public function set_network_plugin_option($plugin)
+	{
 
-		$current            = get_site_option( 'active_sitewide_plugins', [] );
-		$current[ $plugin ] = time();
-		update_site_option( 'active_sitewide_plugins', $current );
+		$current            = get_site_option('active_sitewide_plugins', []);
+		$current[$plugin] = time();
+		update_site_option('active_sitewide_plugins', $current);
 	}
 
 	/**
@@ -267,17 +278,18 @@ class must_use_loader {
 	 * @since   0.0.1
 	 * @return  void
 	 */
-	public function delete_subdir_mu_plugin_cache() {
+	public function delete_subdir_mu_plugin_cache()
+	{
 
 		// get screen information
 		$screen = get_current_screen();
-		if ( null === $screen ) {
+		if (null === $screen) {
 			return;
 		}
 
 		// Delete cache when viewing plugins page in /wp-admin/
-		if ( 'plugins-network' === $screen->id ) {
-			delete_site_transient( 'subdir_wpmu_plugins' );
+		if ('plugins-network' === $screen->id) {
+			delete_site_transient('subdir_wpmu_plugins');
 		}
 	}
 
@@ -287,16 +299,17 @@ class must_use_loader {
 	 * @since   01/09/2014
 	 * @return  void
 	 */
-	public function change_view_values() {
+	public function change_view_values()
+	{
 
 		$current_screen = get_current_screen();
-		if ( null === $current_screen || 'plugins-network' !== $current_screen->id ) {
+		if (null === $current_screen || 'plugins-network' !== $current_screen->id) {
 			return;
 		}
 
-		$item = sprintf( _n( 'item', 'items', $this->mustuse_total ), number_format_i18n( $this->mustuse_total ) ); ?>
+		$item = sprintf(_n('item', 'items', $this->mustuse_total), number_format_i18n($this->mustuse_total)); ?>
 		<script type="text/javascript">
-			jQuery( document ).ready( function($) {
+			jQuery(document).ready(function($) {
 				let text,
 					value,
 					mustuse,
@@ -304,18 +317,18 @@ class must_use_loader {
 
 				// replace the brackets and set int value
 				selector = '.mustuse span';
-				text = $( selector ).text();
-				value = text.replace( '(', '' );
-				value = parseInt( value.replace( ')', '' ) );
+				text = $(selector).text();
+				value = text.replace('(', '');
+				value = parseInt(value.replace(')', ''));
 
 				// replace and add strings
 				mustuse = value + <?php echo $this->mustuse_total; ?>;
-				$( selector ).replaceWith( '(' + mustuse + ')' );
-				mustuse = mustuse + ' <?php echo esc_attr( $item ); ?>';
-				if ( document.URL.search( /plugin_status=mustuse/ ) !== - 1 ) {
-					$( '.tablenav .displaying-num' ).replaceWith( mustuse );
+				$(selector).replaceWith('(' + mustuse + ')');
+				mustuse = mustuse + ' <?php echo esc_attr($item); ?>';
+				if (document.URL.search(/plugin_status=mustuse/) !== -1) {
+					$('.tablenav .displaying-num').replaceWith(mustuse);
 				}
-			} );
+			});
 		</script>
 		<?php
 	}
@@ -329,7 +342,8 @@ class must_use_loader {
 	 *
 	 * @return array
 	 */
-	public function filter_plugin_data( $plugin_file ) {
+	public function filter_plugin_data($plugin_file)
+	{
 
 		$defaults = [
 			'Name'        => '?',
@@ -340,9 +354,9 @@ class must_use_loader {
 			'PluginURI'   => '',
 		];
 
-		$data = get_plugin_data( WPMU_PLUGIN_DIR . '/' . $plugin_file );
+		$data = get_plugin_data(WPMU_PLUGIN_DIR . '/' . $plugin_file);
 
-		return wp_parse_args( $data, $defaults );
+		return wp_parse_args($data, $defaults);
 	}
 
 	/**
@@ -354,13 +368,14 @@ class must_use_loader {
 	 *
 	 * @return string
 	 */
-	public function format_plugin_uri( $data ) {
+	public function format_plugin_uri($data)
+	{
 
-		if ( '' === $data ) {
+		if ('' === $data) {
 			return $data;
 		}
 
-		$plugin_uri = '| <a href="' . esc_url( $data ) . '">' . esc_html__( 'Visit plugin site' ) . '</a>';
+		$plugin_uri = '| <a href="' . esc_url($data) . '">' . esc_html__('Visit plugin site') . '</a>';
 
 		return $plugin_uri;
 	}
@@ -371,45 +386,46 @@ class must_use_loader {
 	 * @since   0.0.1
 	 * @return  void
 	 */
-	public function list_subdir_mu_plugins() {
+	public function list_subdir_mu_plugins()
+	{
 
-		foreach ( $this->plugins as $plugin_file ) {
-			$plugin_data = $this->filter_plugin_data( $plugin_file );
+		foreach ($this->plugins as $plugin_file) {
+			$plugin_data = $this->filter_plugin_data($plugin_file);
 
 			// Sanitize fields
 			$allowed_tags = [
-				'abbr'    => [ 'title' => TRUE ],
-				'acronym' => [ 'title' => TRUE ],
+				'abbr'    => ['title' => TRUE],
+				'acronym' => ['title' => TRUE],
 				'code'    => TRUE,
 				'em'      => TRUE,
 				'strong'  => TRUE,
 				'cite'    => TRUE,
-				'a'       => [ 'href' => TRUE, 'title' => TRUE ],
+				'a'       => ['href' => TRUE, 'title' => TRUE],
 			]; ?>
 
-			<tr id="<?php echo sanitize_title( $plugin_file ); ?>" class="active">
+			<tr id="<?php echo sanitize_title($plugin_file); ?>" class="active">
 				<th scope="row" class="check-column"></th>
 				<td class="plugin-title">
-					<strong title="<?php echo esc_attr( $plugin_file ); ?>">
-						<?php echo wp_kses( $plugin_data[ 'Name' ], $allowed_tags ); ?>
+					<strong title="<?php echo esc_attr($plugin_file); ?>">
+						<?php echo wp_kses($plugin_data['Name'], $allowed_tags); ?>
 					</strong>
 				</td>
 				<td class="column-description desc">
 					<div class="plugin-description">
-						<p><?php echo wp_kses( $plugin_data[ 'Description' ], $allowed_tags ); ?></p>
+						<p><?php echo wp_kses($plugin_data['Description'], $allowed_tags); ?></p>
 					</div>
 					<div class="active second plugin-version-author-uri">
 						<?php printf(
-							esc_attr__( 'Version %1$s | By %2$s %3$s' ),
-							wp_kses( $plugin_data[ 'Version' ], $allowed_tags ),
-							wp_kses( $plugin_data[ 'Author' ], $allowed_tags ),
-							esc_url( $this->format_plugin_uri( $plugin_data[ 'PluginURI' ] ) )
+							esc_attr__('Version %1$s | By %2$s %3$s'),
+							wp_kses($plugin_data['Version'], $allowed_tags),
+							wp_kses($plugin_data['Author'], $allowed_tags),
+							esc_url($this->format_plugin_uri($plugin_data['PluginURI']))
 						); ?>
 					</div>
 				</td>
 			</tr>
 
-			<?php
+<?php
 
 		}
 	}

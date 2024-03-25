@@ -1,30 +1,57 @@
-version: '3.1'
-
+version: '3'
 services:
-
-  db:
-    # image: mysql:5.7
-    # image: 'mysql/mysql-server:8.0'
-    image: mariadb:10.5.8
-    container_name: db
+  wordpress:
+    image: wordpress:latest
+    container_name: "${REPOSITORY_NAME}_wordpress"
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    ports:
+      - 8000:80
     restart: always
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_RANDOM_ROOT_PASSWORD: ${MYSQL_RANDOM_ROOT_PASSWORD}
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wp-app
+    volumes:
+      - ./.srv/wordpress/:/var/www/html
+      - ./.srv/log/:/var/log
+      - ./wp-content:/var/www/html/wp-content
+      # - ./custom.ini:/usr/local/etc/php/conf.d/custom.ini
 
-  wp-cli:
-    image: eustatos/wp-cli
-    container_name: wp-cli
+  wpcli:
+    depends_on:
+      - mysql
+      - wordpress
+    image: wordpress:cli
+    container_name: "${REPOSITORY_NAME}_wpcli"
+    links:
+      - mysql:mysql
+    entrypoint: wp
+    command: "--info"
+    environment:
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wp-app
+    volumes:
+      - ./.srv/wordpress/:/var/www/html
+      - ./.srv/log/:/var/log
+      - ./wp-content:/var/www/html/wp-content
+      # - ./custom.ini:/usr/local/etc/php/conf.d/custom.ini
+
+  mysql:
+    image: mariadb:10.5.8
+    container_name: "${REPOSITORY_NAME}_mysql"
     restart: always
     ports:
-      - 8080:80
-    volumes: 
-      - ./wp-content:/var/www/html/wp-content
+      - 3306:3306
+    volumes:
+      - "./.srv/database:/var/lib/mysql"
     environment:
-      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
-      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
-      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
-      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
-    env_file: ./site.env
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wp-app
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress

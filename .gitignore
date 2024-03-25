@@ -1,6 +1,17 @@
 .env
-site.env
+.srv
 dbdump.sql
-wp-content/upgrade
-wp-content/plugins
+wp-content/*
+!wp-content/mu-plugins
+!wp-content/uploads
+!wp-content/themes/
 wp-content/themes/index.php
+wp-content/themes/twentytwentytwo
+wp-content/themes/twentytwentythree
+wp-content/themes/twentytwentyfour
+wp-content/themes/*/vendor
+wp-content/themes/*/node_modules
+# wp-content/themes/*/composer.lock
+
+.DS_Store
+__MACOSX

@@ -1,0 +1,41 @@
+{
+  "devDependencies": {
+    "node-sass": "^7.0.1"
+  },
+  "scripts": {
+    "watch": "node-sass sass/ -o css/ --output-style expanded --indent-type tab --indent-width 1 -w",
+    "compile:css": "node-sass sass/ -o css/ && stylelint '*.css' --fix || true && stylelint '*.css' --fix"
+  },
+  "__comment": {
+    "you-can-add-linters": {
+      "devDependencies": {
+        "@wordpress/scripts": "^19.2.2"
+      },
+      "scripts": {
+        "lint:scss": "wp-scripts lint-style 'sass/**/*.scss'",
+        "lint:js": "wp-scripts lint-js 'js/*.js'"
+      }
+    },
+    "you-can-add-rtlcompiler": {
+      "devDependencies": {
+        "rtlcss": "^3.5.0"
+      },
+      "rtlcssConfig": {
+        "options": {
+          "autoRename": false,
+          "autoRenameStrict": false,
+          "blacklist": {},
+          "clean": true,
+          "greedy": false,
+          "processUrls": false,
+          "stringMap": []
+        },
+        "plugins": [],
+        "map": false
+      },
+      "scripts": {
+        "compile:rtl": "rtlcss style.css style-rtl.css"
+      }
+    }
+  }
+}
