@@ -9,6 +9,8 @@ get_header();
     the_archive_description('<div class="archive-description">', '</div>');
     ?>
 
+    <br>
+
   <?php
     while (have_posts()) :
       the_post();

@@ -35,6 +35,7 @@ elif [ "$1" == "user-create" ]; then
     exit
 
 elif [ "$1" == "config" ]; then
+    rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli theme activate $THEME_SLUG
 
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin uninstall hello
@@ -95,7 +96,6 @@ elif [ "$1" == "clean" ]; then
     rm -rf wp-content/index.php
     rm -rf wp-content/themes/index.php
     rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
-    # rm -rf wp-content/themes/$THEME_SLUG/acf-json/* 
     rm -rf wp-content/themes/$THEME_SLUG/style.css
     rm -rf wp-content/themes/$THEME_SLUG/vendor
     rm -rf wp-content/themes/$THEME_SLUG/node_modules
