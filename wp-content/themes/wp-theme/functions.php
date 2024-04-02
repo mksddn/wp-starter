@@ -24,6 +24,12 @@ add_action('after_setup_theme', 'theme_setup');
 
 
 /**
+ * Настройки WooCommerce
+ */
+// require get_template_directory() . '/inc/woocommerce-settings.php';
+
+
+/**
  * Регистрируем меню
  */
 // register_nav_menus(array(

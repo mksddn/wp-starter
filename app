@@ -57,6 +57,14 @@ elif [ "$1" == "dbexport" ]; then
     docker-compose run --rm wordpress rm -rf dbdump.sql
     exit
 
+elif [ "$1" == "debug-on" ]; then
+    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli config set WP_DEBUG true --raw
+    exit
+
+elif [ "$1" == "debug-off" ]; then
+    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli config set WP_DEBUG false --raw
+    exit
+
 elif [ "$1" == "composer-install" ]; then
     cd wp-content/themes/$THEME_SLUG
     composer install
