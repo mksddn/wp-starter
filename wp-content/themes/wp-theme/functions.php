@@ -19,16 +19,8 @@ function theme_setup()
   // ));
   add_theme_support('title-tag');
   add_theme_support('custom-logo', ['unlink-homepage-logo' => true]);
-
 }
 add_action('after_setup_theme', 'theme_setup');
-
-
-/**
-
- * Настройки WooCommerce
- */
-// require get_template_directory() . '/inc/woocommerce-settings.php';
 
 
 /**
@@ -44,6 +36,12 @@ add_action('after_setup_theme', 'theme_setup');
  * Подключаем стили и скрипты
  */
 require get_template_directory() . '/inc/styles-n-scripts.php';
+
+
+/**
+ * Настройки WooCommerce
+ */
+// require get_template_directory() . '/inc/woocommerce-settings.php';
 
 
 /**
@@ -88,7 +86,6 @@ require get_template_directory() . '/inc/search-settings.php';
 
 
 /**
-
  * Добавляем свои классы в body (иногда нужно, тк верстальщики прописывают стили к кастомным классам)
  */
 // function my_plugin_body_class($classes)
