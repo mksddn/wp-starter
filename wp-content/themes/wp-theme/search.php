@@ -8,6 +8,7 @@ get_header();
       printf('Search Results for: %s', '<span>' . get_search_query() . '</span>');
       ?>
     </h1>
+    <br>
   <?php
     while (have_posts()) :
       the_post();
