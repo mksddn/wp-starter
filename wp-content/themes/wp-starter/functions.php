@@ -1,12 +1,10 @@
 <?php
 
-/**
- * Настройки темы
- */
+########## Настройки темы
 function theme_setup()
 {
-  // add_theme_support('post-formats');
   // add_theme_support('automatic-feed-links');
+  add_theme_support('title-tag');
   add_theme_support('post-thumbnails');
   // add_theme_support('html5', array(
   //   'search-form',
@@ -17,30 +15,23 @@ function theme_setup()
   //   'style',
   //   'script',
   // ));
-  add_theme_support('title-tag');
   add_theme_support('custom-logo');
 }
 add_action('after_setup_theme', 'theme_setup');
 
 
-/**
- * Регистрируем меню
- */
+// ########## Регистрируем меню
 // register_nav_menus(array(
 //   'main_menu' => esc_html__('Основное меню'),
 //   // 'footer_menu' => esc_html__('Дополнительное меню'),
 // ));
 
 
-/**
- * Подключаем стили и скрипты
- */
+########## Подключаем стили и скрипты
 require get_template_directory() . '/inc/styles-n-scripts.php';
 
 
-/**
- * Регистрируем новые размеры изображений
- */
+// ########## Регистрируем новые размеры изображений
 // if (function_exists('add_image_size')) {
 //   // 300 в ширину и без ограничения в высоту
 //   add_image_size('category-thumb', 300, 9999);
@@ -49,16 +40,13 @@ require get_template_directory() . '/inc/styles-n-scripts.php';
 // }
 
 
-/**
- * Отключаем создание миниатюр изображений для указанных размеров
- */
+########## Отключаем создание миниатюр изображений для указанных размеров
 add_filter('intermediate_image_sizes', 'delete_intermediate_image_sizes');
 function delete_intermediate_image_sizes($sizes)
 {
   // размеры которые нужно удалить
   return array_diff($sizes, [
     'thumbnail',
-    'medium',
     'medium_large',
     'large',
     '1536x1536',
@@ -67,15 +55,11 @@ function delete_intermediate_image_sizes($sizes)
 }
 
 
-/**
- * Миниатюры в списке записей в админке
- */
-require get_template_directory() . '/inc/thumbnail-columns.php';
+// ########## Миниатюры в списке записей в админке
+// require get_template_directory() . '/inc/thumbnail-columns.php';
 
 
-/**
- * Добавляем свои классы в body (иногда нужно, тк верстальщики прописывают стили к кастомным классам)
- */
+// ########## Добавляем свои классы в body (иногда нужно, тк верстальщики прописывают стили к кастомным классам)
 // function my_plugin_body_class($classes)
 // {
 //   $classes[] = 'body-header-fixed';
@@ -84,15 +68,11 @@ require get_template_directory() . '/inc/thumbnail-columns.php';
 // add_filter('body_class', 'my_plugin_body_class');
 
 
-/**
- * Поддержка SVG
- */
+########## Поддержка SVG
 require get_template_directory() . '/inc/svg-support.php';
 
 
-/**
- * Добавляем страницу настроек ACF (и в меню тоже)
- */
+// ########## Добавляем страницу настроек ACF (и в меню тоже)
 // if (function_exists('acf_add_options_page')) {
 //   $args = array(
 //     'page_title' => 'Общие настройки', //Заголовок страницы
@@ -105,9 +85,7 @@ require get_template_directory() . '/inc/svg-support.php';
 // }
 
 
-/**
- * Добавляем описание (отрывок) к странице
- */
+// ########## Добавляем описание (отрывок) к странице
 // function add_excerpt_page()
 // {
 //   add_post_type_support('page', 'excerpt');
@@ -115,23 +93,17 @@ require get_template_directory() . '/inc/svg-support.php';
 // add_action('init', 'add_excerpt_page');
 
 
-/**
- * Отключаем редактор Гутенберг
- */
+// ########## Отключаем редактор Гутенберг
 // add_filter('use_block_editor_for_post', '__return_false', 10);
 
 
-/**
- * Удаляет "Рубрика: ", "Метка: " и т.д. из заголовка архива
- */
+// ########## Удаляет "Рубрика: ", "Метка: " и т.д. из заголовка архива
 // add_filter('get_the_archive_title', function ($title) {
 //   return preg_replace('~^[^:]+: ~', '', $title);
 // });
 
 
-/**
- * Удаляет H2 из шаблона пагинации
- */
+// ########## удаляет H2 из шаблона пагинации
 // add_filter('navigation_markup_template', 'my_navigation_template', 10, 2);
 // function my_navigation_template($template, $class)
 // {
@@ -143,7 +115,6 @@ require get_template_directory() . '/inc/svg-support.php';
 // }
 
 
-/**
- * Убираем лишние теги в формах CF7
- */ 
+// ########## Убираем лишние теги в формах CF7
 // require get_template_directory() . '/inc/wpcf7-form-cleaner.php';
+
