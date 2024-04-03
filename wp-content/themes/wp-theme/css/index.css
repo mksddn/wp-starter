@@ -1,11 +1,3 @@
-
-body.page,
-body.post {
+html {
   margin: 0;
-  padding: 0;
-}
-
-a:visited {
-  color: inherit;
-}
-
+  padding: 0; }
