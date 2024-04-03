@@ -20,6 +20,7 @@ if [ "$1" == "up" ]; then
     * Theme Name: $THEME_SLUG
     */" | cat - wp-content/themes/$THEME_SLUG/style.css > temp && mv temp wp-content/themes/$THEME_SLUG/style.css
 
+
     xdg-open http://localhost:8000
     open http://localhost:8000
     start http://localhost:8000
@@ -35,7 +36,9 @@ elif [ "$1" == "user-create" ]; then
     exit
 
 elif [ "$1" == "config" ]; then
+
     rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
+
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli theme activate $THEME_SLUG
 
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin uninstall hello
@@ -49,6 +52,7 @@ elif [ "$1" == "config" ]; then
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli post update 2 --post_title=Home --post_name=home
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli option update page_on_front 2
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli option update show_on_front page
+
     exit
     
 elif [ "$1" == "dbexport" ]; then
@@ -57,6 +61,7 @@ elif [ "$1" == "dbexport" ]; then
     docker-compose run --rm wordpress rm -rf dbdump.sql
     exit
 
+
 elif [ "$1" == "debug-on" ]; then
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli config set WP_DEBUG true --raw
     exit
@@ -64,7 +69,6 @@ elif [ "$1" == "debug-on" ]; then
 elif [ "$1" == "debug-off" ]; then
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli config set WP_DEBUG false --raw
     exit
-
 elif [ "$1" == "composer-install" ]; then
     cd wp-content/themes/$THEME_SLUG
     composer install
@@ -102,8 +106,10 @@ elif [ "$1" == "clean" ]; then
     rm -rf wp-content/uploads
     rm -rf wp-content/upgrade
     rm -rf wp-content/index.php
+
     rm -rf wp-content/themes/index.php
     rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
+
     rm -rf wp-content/themes/$THEME_SLUG/style.css
     rm -rf wp-content/themes/$THEME_SLUG/vendor
     rm -rf wp-content/themes/$THEME_SLUG/node_modules

@@ -10,7 +10,6 @@ get_header();
     ?>
 
     <br>
-
   <?php
     while (have_posts()) :
       the_post();

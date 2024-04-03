@@ -21,6 +21,7 @@ services:
       - ./wp-content:/var/www/html/wp-content
       - ./custom.ini:/usr/local/etc/php/conf.d/custom.ini
 
+
   wpcli:
     depends_on:
       - mysql
