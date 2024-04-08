@@ -4,8 +4,8 @@ if (have_rows('acf_blocks')) :
 
     if (get_row_layout() == 'hello_world') :
       get_template_part('template-parts/acf-blocks/hello_world');
-    // elseif (get_row_layout() == 'another_greeting') :
-    //   get_template_part('template-parts/acf-blocks/another_greeting');
+    // elseif (get_row_layout() == 'another_block') :
+    //   get_template_part('template-parts/acf-blocks/another_block');
     endif;
 
   endwhile;
