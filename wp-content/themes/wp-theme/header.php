@@ -10,4 +10,6 @@
 
 <body <?php body_class(); ?>>
 	<?php wp_body_open(); ?>
-	<!-- Шапка сайта обычно размещается здесь -->
+	<header id="masthead" class="header">
+		<!-- Шапка сайта обычно размещается здесь -->
+	</header>

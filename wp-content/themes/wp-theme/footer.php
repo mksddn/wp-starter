@@ -1,5 +1,5 @@
 <footer id="colophon" class="site-footer">
-  <!-- Подвал размещаем здесь, желательно сохранить id и class -->
+  <!-- Подвал размещаем здесь -->
 </footer>
 <?php wp_footer(); ?>
 </body>

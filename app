@@ -13,12 +13,12 @@ if [ "$1" == "up" ]; then
     docker-compose up -d
 
     rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
-    mv wp-content/themes/* wp-content/themes/$THEME_SLUG
-    rm -rf wp-content/themes/$THEME_SLUG/style.css
-    touch wp-content/themes/$THEME_SLUG/style.css
+    mv wp-content/themes/* wp-content/themes/$THEME_DIRECTORY
+    rm -rf wp-content/themes/$THEME_DIRECTORY/style.css
+    touch wp-content/themes/$THEME_DIRECTORY/style.css
     echo "/**
     * Theme Name: $THEME_SLUG
-    */" | cat - wp-content/themes/$THEME_SLUG/style.css > temp && mv temp wp-content/themes/$THEME_SLUG/style.css
+    */" | cat - wp-content/themes/$THEME_DIRECTORY/style.css > temp && mv temp wp-content/themes/$THEME_DIRECTORY/style.css
 
     xdg-open http://localhost:8000
     open http://localhost:8000
@@ -36,7 +36,7 @@ elif [ "$1" == "user-create" ]; then
 
 elif [ "$1" == "config" ]; then
     rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli theme activate $THEME_SLUG
+    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli theme activate $THEME_DIRECTORY
 
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin uninstall hello
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin uninstall akismet
@@ -66,31 +66,31 @@ elif [ "$1" == "debug-off" ]; then
     exit
 
 elif [ "$1" == "composer-install" ]; then
-    cd wp-content/themes/$THEME_SLUG
+    cd wp-content/themes/$THEME_DIRECTORY
     composer install
     cd ../..
     exit
 
 elif [ "$1" == "lint:php" ]; then
-    cd wp-content/themes/$THEME_SLUG
+    cd wp-content/themes/$THEME_DIRECTORY
     composer lint:php
     cd ../..
     exit
 
 elif [ "$1" == "npm-install" ]; then
-    cd wp-content/themes/$THEME_SLUG
+    cd wp-content/themes/$THEME_DIRECTORY
     npm install
     cd ../..
     exit
 
 elif [ "$1" == "watch" ]; then
-    cd wp-content/themes/$THEME_SLUG
+    cd wp-content/themes/$THEME_DIRECTORY
     npm run watch
     cd ../..
     exit
 
 elif [ "$1" == "compile:css" ]; then
-    cd wp-content/themes/$THEME_SLUG
+    cd wp-content/themes/$THEME_DIRECTORY
     npm run compile:css
     cd ../..
     exit
@@ -104,9 +104,9 @@ elif [ "$1" == "clean" ]; then
     rm -rf wp-content/index.php
     rm -rf wp-content/themes/index.php
     rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
-    rm -rf wp-content/themes/$THEME_SLUG/style.css
-    rm -rf wp-content/themes/$THEME_SLUG/vendor
-    rm -rf wp-content/themes/$THEME_SLUG/node_modules
+    rm -rf wp-content/themes/$THEME_DIRECTORY/style.css
+    rm -rf wp-content/themes/$THEME_DIRECTORY/vendor
+    rm -rf wp-content/themes/$THEME_DIRECTORY/node_modules
     exit
 
 fi
