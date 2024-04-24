@@ -1,4 +1,7 @@
 export REPOSITORY_NAME=$(basename `git rev-parse --show-toplevel`)
+export URL_LOCAL=${URL_LOCAL}
+export URL_DEV=${URL_DEV}
+export URL_PROD=${URL_PROD}
 
 # alias wp="docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli"
 
@@ -55,6 +58,20 @@ elif [ "$1" == "dbexport" ]; then
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli db export dbdump.sql --allow-root
     docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/dbdump.sql .
     docker-compose run --rm wordpress rm -rf dbdump.sql
+    exit
+
+elif [ "$1" == "dbimport-dev" ]; then
+    docker cp *.sql ${REPOSITORY_NAME}_wpcli://var/www/html/
+    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli db import *.sql --allow-root
+    docker-compose run --rm wordpress rm -rf *.sql
+    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_DEV} ${URL_LOCAL}
+    exit
+
+elif [ "$1" == "dbimport-prod" ]; then
+    docker cp *.sql ${REPOSITORY_NAME}_wpcli://var/www/html/
+    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli db import *.sql --allow-root
+    docker-compose run --rm wordpress rm -rf *.sql
+    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_PROD} ${URL_LOCAL}
     exit
 
 elif [ "$1" == "debug-on" ]; then
