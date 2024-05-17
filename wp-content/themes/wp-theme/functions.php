@@ -74,6 +74,13 @@ function delete_intermediate_image_sizes($sizes)
 
 
 /**
+ * REST API роуты
+ */
+require get_template_directory() . '/inc/api/api.php';
+
+
+
+/**
  * Миниатюры в списке записей в админке
  */
 require get_template_directory() . '/inc/thumbnail-columns.php';

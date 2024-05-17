@@ -97,6 +97,12 @@ elif [ "$1" == "lint:php" ]; then
     cd ../..
     exit
 
+elif [ "$1" == "lint:wpcs" ]; then
+    cd wp-content/themes/$THEME_DIRECTORY
+    composer lint:wpcs
+    cd ../..
+    exit
+
 elif [ "$1" == "npm-install" ]; then
     cd wp-content/themes/$THEME_DIRECTORY
     npm install
