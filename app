@@ -3,6 +3,8 @@ export URL_LOCAL=${URL_LOCAL}
 export URL_DEV=${URL_DEV}
 export URL_PROD=${URL_PROD}
 
+export THEME_DIRECTORY='wp-theme'
+
 # alias wp="docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli"
 
 if [ -f .env ]; then
@@ -13,16 +15,14 @@ else
 fi
 
 if [ "$1" == "install" ]; then
-
-    rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
+    docker-compose up -d
+    # rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
     mv wp-content/themes/* wp-content/themes/$THEME_DIRECTORY
     rm -rf wp-content/themes/$THEME_DIRECTORY/style.css
     touch wp-content/themes/$THEME_DIRECTORY/style.css
     echo "/**
     * Theme Name: $THEME_SLUG
     */" | cat - wp-content/themes/$THEME_DIRECTORY/style.css > temp && mv temp wp-content/themes/$THEME_DIRECTORY/style.css
-
-    docker-compose up -d
 
     xdg-open http://localhost:8000
     open http://localhost:8000
