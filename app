@@ -53,7 +53,7 @@ elif [ "$1" == "config" ]; then
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin uninstall hello
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin uninstall akismet
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin install cyr2lat --activate
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin install "http://connect.advancedcustomfields.com/index.php?p=pro&a=download&k=$ACF_KEY" --allow-root
+    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=$ACF_KEY" --allow-root
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin activate --all
 
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli rewrite structure '/%postname%/'
