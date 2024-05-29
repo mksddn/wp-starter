@@ -14,7 +14,7 @@ else
   exit
 fi
 
-if [ "$1" == "install" ]; then
+if [ "$1" == "up" ]; then
     docker-compose up -d
     rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
     mv wp-content/themes/* wp-content/themes/$THEME_DIRECTORY
@@ -24,17 +24,9 @@ if [ "$1" == "install" ]; then
     * Theme Name: $THEME_SLUG
     */" | cat - wp-content/themes/$THEME_DIRECTORY/style.css > temp && mv temp wp-content/themes/$THEME_DIRECTORY/style.css
 
-    xdg-open http://localhost:8000
+    # xdg-open http://localhost:8000
     open http://localhost:8000
-    start http://localhost:8000
-    # python3 -m webbrowser http://localhost:8000
-    exit
-
-elif [ "$1" == "up" ]; then
-    docker-compose up -d
-    xdg-open http://localhost:8000
-    open http://localhost:8000
-    start http://localhost:8000
+    # start http://localhost:8000
     # python3 -m webbrowser http://localhost:8000
     exit
 
@@ -88,37 +80,37 @@ elif [ "$1" == "debug-off" ]; then
 elif [ "$1" == "composer-install" ]; then
     cd wp-content/themes/$THEME_DIRECTORY
     composer install
-    cd ../..
+    cd ../../..
     exit
 
 elif [ "$1" == "lint:php" ]; then
     cd wp-content/themes/$THEME_DIRECTORY
     composer lint:php
-    cd ../..
+    cd ../../..
     exit
 
 elif [ "$1" == "lint:wpcs" ]; then
     cd wp-content/themes/$THEME_DIRECTORY
     composer lint:wpcs
-    cd ../..
+    cd ../../..
     exit
 
 elif [ "$1" == "npm-install" ]; then
     cd wp-content/themes/$THEME_DIRECTORY
     npm install
-    cd ../..
+    cd ../../..
     exit
 
 elif [ "$1" == "watch" ]; then
     cd wp-content/themes/$THEME_DIRECTORY
     npm run watch
-    cd ../..
+    cd ../../..
     exit
 
 elif [ "$1" == "compile:css" ]; then
     cd wp-content/themes/$THEME_DIRECTORY
     npm run compile:css
-    cd ../..
+    cd ../../..
     exit
 
 elif [ "$1" == "clean" ]; then
