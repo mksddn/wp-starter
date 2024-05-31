@@ -5,6 +5,8 @@ export URL_PROD=${URL_PROD}
 
 export THEME_DIRECTORY='wp-theme'
 
+current_date_time=$(date +”%Y%m%d%H%M”)
+
 # alias wp="docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli"
 
 if [ -f .env ]; then
@@ -62,11 +64,17 @@ elif [ "$1" == "dbexport" ]; then
     exit
 
 elif [ "$1" == "dbimport" ]; then
+    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli db export --tables=wp_users,wp_usermeta users.sql --allow-root
+    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli db export $current_date_time.sql --allow-root
+    docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/$current_date_time.sql ./backup-db/
+    docker-compose run --rm wordpress rm -rf $current_date_time.sql
     docker cp *.sql ${REPOSITORY_NAME}_wpcli://var/www/html/
+    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli db clean --allow-root
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli db import *.sql --allow-root
     docker-compose run --rm wordpress rm -rf *.sql
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_DEV} ${URL_LOCAL}
     docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_PROD} ${URL_LOCAL}
+    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli db import users.sql --allow-root
     exit
 
 elif [ "$1" == "debug-on" ]; then

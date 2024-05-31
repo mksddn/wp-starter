@@ -1,6 +1,7 @@
 .env
 .srv
 dbdump.sql
+backup-db
 wp-content/*
 !wp-content/mu-plugins
 !wp-content/uploads
