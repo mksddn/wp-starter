@@ -7,7 +7,7 @@ export THEME_DIRECTORY='wp-theme'
 
 current_date_time=$(date +”%Y%m%d%H%M”)
 
-# alias wp="docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli"
+# alias wp="docker compose run --rm -e HOME=/tmp --user 33:33 wpcli"
 
 if [ -f .env ]; then
   export $(echo $(cat .env | sed 's/#.*//g'| xargs) | envsubst)
@@ -17,7 +17,7 @@ else
 fi
 
 if [ "$1" == "up" ]; then
-    docker-compose up -d
+    docker compose up -d
     rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
     mv wp-content/themes/* wp-content/themes/$THEME_DIRECTORY
     rm -rf wp-content/themes/$THEME_DIRECTORY/style.css
@@ -33,56 +33,56 @@ if [ "$1" == "up" ]; then
     exit
 
 elif [ "$1" == "stop" ]; then
-    docker-compose stop
+    docker compose stop
     exit
 
 elif [ "$1" == "user-create" ]; then
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli user create --prompt --role=administrator --user_registered= --display_name= --user_nicename= --user_url= --nickname= --first_name= --last_name= --description= --rich_editing= --send-email= --porcelain=n
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli user create --prompt --role=administrator --user_registered= --display_name= --user_nicename= --user_url= --nickname= --first_name= --last_name= --description= --rich_editing= --send-email= --porcelain=n
     exit
 
 elif [ "$1" == "config" ]; then
     rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli theme activate $THEME_DIRECTORY
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli theme activate $THEME_DIRECTORY
 
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin uninstall hello
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin uninstall akismet
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin install cyr2lat --activate
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=$ACF_KEY" --allow-root
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin activate --all
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin uninstall hello
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin uninstall akismet
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin install cyr2lat --activate
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=$ACF_KEY" --allow-root
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin activate --all
 
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli rewrite structure '/%postname%/'
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli rewrite structure '/%postname%/'
 
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli post update 2 --post_title=Home --post_name=home
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli option update page_on_front 2
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli option update show_on_front page
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli post update 2 --post_title=Home --post_name=home
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli option update page_on_front 2
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli option update show_on_front page
     exit
     
 elif [ "$1" == "dbexport" ]; then
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli db export dbdump.sql --allow-root
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export dbdump.sql --allow-root
     docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/dbdump.sql .
-    docker-compose run --rm wordpress rm -rf dbdump.sql
+    docker compose run --rm wordpress rm -rf dbdump.sql
     exit
 
 elif [ "$1" == "dbimport" ]; then
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli db export --tables=wp_users,wp_usermeta users.sql --allow-root
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli db export $current_date_time.sql --allow-root
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export --tables=wp_users,wp_usermeta users.sql --allow-root
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export $current_date_time.sql --allow-root
     docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/$current_date_time.sql ./backup-db/
-    docker-compose run --rm wordpress rm -rf $current_date_time.sql
+    docker compose run --rm wordpress rm -rf $current_date_time.sql
     docker cp *.sql ${REPOSITORY_NAME}_wpcli://var/www/html/
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli db clean --allow-root
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli db import *.sql --allow-root
-    docker-compose run --rm wordpress rm -rf *.sql
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_DEV} ${URL_LOCAL}
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_PROD} ${URL_LOCAL}
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli db import users.sql --allow-root
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db clean --allow-root
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db import *.sql --allow-root
+    docker compose run --rm wordpress rm -rf *.sql
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_DEV} ${URL_LOCAL}
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_PROD} ${URL_LOCAL}
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db import users.sql --allow-root
     exit
 
 elif [ "$1" == "debug-on" ]; then
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli config set WP_DEBUG true --raw
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli config set WP_DEBUG true --raw
     exit
 
 elif [ "$1" == "debug-off" ]; then
-    docker-compose run --rm -e HOME=/tmp --user 33:33 wpcli config set WP_DEBUG false --raw
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli config set WP_DEBUG false --raw
     exit
 
 elif [ "$1" == "composer-install" ]; then
