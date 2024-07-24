@@ -1,6 +1,6 @@
 .env
 .srv
-dbdump.sql
+# dbdump.sql
 backup-db
 wp-content/*
 !wp-content/mu-plugins
