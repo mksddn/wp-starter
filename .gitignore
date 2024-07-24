@@ -4,6 +4,7 @@ dbdump.sql
 backup-db
 wp-content/*
 !wp-content/mu-plugins
+!wp-content/languages
 !wp-content/uploads
 !wp-content/themes/
 wp-content/themes/index.php
