@@ -1,0 +1,5 @@
+cyr2lat
+all-in-one-wp-migration
+contact-form-7
+wp-mail-smtp
+wordpress-seo
