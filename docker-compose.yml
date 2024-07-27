@@ -8,7 +8,6 @@ services:
       - mysql
     ports:
       - 8000:80
-    restart: always
     environment:
       WORDPRESS_DB_HOST: mysql:3306
       WORDPRESS_DB_USER: wordpress
@@ -44,7 +43,6 @@ services:
   mysql:
     image: mariadb:10.5.8
     container_name: "${REPOSITORY_NAME}_mysql"
-    restart: always
     ports:
       - 3306:3306
     volumes:
@@ -58,7 +56,6 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: "${REPOSITORY_NAME}_phpmyadmin"
-    restart: always
     ports:
       - "8080:80"
     environment:
