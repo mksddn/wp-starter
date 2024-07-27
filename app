@@ -15,7 +15,7 @@ export REPOSITORY_NAME=$(basename $(git rev-parse --show-toplevel))
 export THEME_DIRECTORY='wp-theme'
 
 plugins=()
-for line in $(cat plugins.txt); do
+for line in $(cat wp-settings/plugins.txt); do
     plugins+=("$line")
 done
 
