@@ -31,6 +31,7 @@
 - Проверить все файлы PHP согласно [WP Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/) `./app lint:wpcs`
 
 ## Советы
+- Устанавливаемые плагины можно указать в файле wp-settings/plugins.txt
 - После команды `./app config` рекомендую перейти в **Настройки -> Постоянные ссылки** и просто нажать "Сохранить изменения"
 - Панель phpMyAdmin доступна по адресу [http://localhost:8080](http://localhost:8080/)
 - Веди разработку под собственной учетной записью в админке
