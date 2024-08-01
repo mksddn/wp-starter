@@ -80,13 +80,13 @@ elif [ "$1" == "user-create" ]; then
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli user create --prompt --role=administrator --user_registered= --display_name= --user_nicename= --user_url= --nickname= --first_name= --last_name= --description= --rich_editing= --send-email= --porcelain=n
     exit
 
-elif [ "$1" == "config" ]; then
-    # rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli rewrite structure '/%postname%/'
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli post update 2 --post_title=Home --post_name=home
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli option update page_on_front 2
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli option update show_on_front page
-    exit
+# elif [ "$1" == "config" ]; then
+#     # rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
+#     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli rewrite structure '/%postname%/'
+#     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli post update 2 --post_title=Home --post_name=home
+#     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli option update page_on_front 2
+#     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli option update show_on_front page
+#     exit
 
 elif [ "$1" == "dbexport" ]; then
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export dbdump.sql --allow-root
