@@ -35,7 +35,7 @@ if [ "$1" == "up" ]; then
 
     retries=0
     while :; do
-        if docker compose run --rm -e HOME=/tmp --user 33:33 wpcli core install --url=$URL_LOCAL --title=$SITE_TITLE --admin_user=$ADMIN_USER --admin_password=$ADMIN_PASSWORD --admin_email=$ADMIN_EMAIL; then
+        if docker compose run --rm -e HOME=/tmp --user 33:33 wpcli core install --url=$URL_LOCAL --title='MY WEBSITE' --admin_user=$ADMIN_USER --admin_password=$ADMIN_PASSWORD --admin_email=$ADMIN_EMAIL; then
             break
         else
             retries=$((retries + 1))
@@ -66,10 +66,10 @@ if [ "$1" == "up" ]; then
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=$ACF_KEY" --allow-root --activate
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin activate --all
 
-    # xdg-open http://localhost:8000
-    open http://localhost:8000
-    # start http://localhost:8000
-    # python3 -m webbrowser http://localhost:8000
+    # xdg-open http://localhost:8000/wp-admin
+    open http://localhost:8000/wp-admin
+    # start http://localhost:8000/wp-admin
+    # python3 -m webbrowser http://localhost:8000/wp-admin
     exit
 
 elif [ "$1" == "stop" ]; then
