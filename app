@@ -1,7 +1,7 @@
-export SITE_TITLE=${SITE_TITLE}
-export ADMIN_USER=${ADMIN_USER}
-export ADMIN_PASSWORD=${ADMIN_PASSWORD}
-export ADMIN_EMAIL=${ADMIN_EMAIL}
+export SITE_TITLE='MY WEBSITE'
+export ADMIN_USER='madmin'
+export ADMIN_PASSWORD='root'
+export ADMIN_EMAIL='mr.madu@ya.ru'
 
 # Все урлы указываем без слэша / в конце адреса, иначе импорт БД не сработает.
 URL_LOCAL=http://localhost:8000
@@ -23,19 +23,19 @@ current_date_time=$(date +”%Y%m%d%H%M”)
 
 # alias wp="docker compose run --rm -e HOME=/tmp --user 33:33 wpcli"
 
-if [ -f .env ]; then
-    export $(echo $(cat .env | sed 's/#.*//g' | xargs) | envsubst)
-else
-    echo "Looks like you don't have .ENV file!"
-    exit
-fi
+# if [ -f .env ]; then
+#     export $(echo $(cat .env | sed 's/#.*//g' | xargs) | envsubst)
+# else
+#     echo "Looks like you don't have .ENV file!"
+#     exit
+# fi
 
 if [ "$1" == "up" ]; then
     docker compose up -d
 
     retries=0
     while :; do
-        if docker compose run --rm -e HOME=/tmp --user 33:33 wpcli core install --url=$URL_LOCAL --title='MY WEBSITE' --admin_user=$ADMIN_USER --admin_password=$ADMIN_PASSWORD --admin_email=$ADMIN_EMAIL; then
+        if docker compose run --rm -e HOME=/tmp --user 33:33 wpcli core install --url=$URL_LOCAL --title=$URL_LOCAL --admin_user=$ADMIN_USER --admin_password=$ADMIN_PASSWORD --admin_email=$ADMIN_EMAIL; then
             break
         else
             retries=$((retries + 1))
@@ -95,7 +95,7 @@ elif [ "$1" == "dbexport" ]; then
     exit
 
 elif [ "$1" == "dbimport" ]; then
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export --tables=wp_users,wp_usermeta users.sql --allow-root
+    # docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export --tables=wp_users,wp_usermeta users.sql --allow-root
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export $current_date_time.sql --allow-root
     docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/$current_date_time.sql ./backup-db/
     docker compose run --rm wordpress rm -rf $current_date_time.sql
@@ -105,7 +105,8 @@ elif [ "$1" == "dbimport" ]; then
     docker compose run --rm wordpress rm -rf *.sql
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_DEV} ${URL_LOCAL}
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_PROD} ${URL_LOCAL}
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db import users.sql --allow-root
+    # docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db import users.sql --allow-root
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli user create ${ADMIN_USER} ${ADMIN_EMAIL} --user_pass=${ADMIN_PASSWORD} --role=administrator --user_registered= --display_name= --user_nicename= --user_url= --nickname= --first_name= --last_name= --description= --rich_editing= --send-email= --porcelain=n
     exit
 
 elif [ "$1" == "debug-on" ]; then
