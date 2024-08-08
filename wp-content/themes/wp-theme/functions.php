@@ -116,6 +116,12 @@ require get_template_directory() . '/inc/disable-comments.php';
 
 
 /**
+ * Mail обработчик
+ */
+require get_template_directory() . '/inc/mail.php';
+
+
+/**
  * Добавляем страницу настроек ACF (и в меню тоже)
  */
 // if (function_exists('acf_add_options_page')) {
