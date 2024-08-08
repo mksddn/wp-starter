@@ -3,6 +3,12 @@ get_header();
 ?>
 <main id="primary" class="site-main">
 
+	<?php
+	if (function_exists('yoast_breadcrumb')) {
+		yoast_breadcrumb('<p id="breadcrumbs">', '</p>');
+	}
+	?>
+
 	<section class="error-404 not-found">
 		<article>
 			<h1>

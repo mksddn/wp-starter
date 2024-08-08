@@ -169,12 +169,6 @@ require get_template_directory() . '/inc/disable-comments.php';
 
 
 /**
- * Хлебные крошки
- */
-// require get_template_directory() . '/inc/breadcrumbs.php';
-
-
-/**
  * Убираем лишние теги в формах CF7
  */ 
 // require get_template_directory() . '/inc/wpcf7-form-cleaner.php';

@@ -25,9 +25,9 @@ current_date_time=$(date +”%Y%m%d%H%M”)
 
 # if [ -f .env ]; then
 #     export $(echo $(cat .env | sed 's/#.*//g' | xargs) | envsubst)
-# else
-#     echo "Looks like you don't have .ENV file!"
-#     exit
+else
+    echo "Looks like you don't have .ENV file!"
+    exit
 # fi
 
 if [ "$1" == "up" ]; then
