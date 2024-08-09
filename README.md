@@ -9,7 +9,7 @@
 
 | username | password |
 | -------- | -------- |
-| dev | root |
+| dev      | root     |
 
 ### Команды приложения
 - Запустить приложение `./app up`
@@ -39,11 +39,3 @@
 - Не забывай передавать дамп БД другому разработчику или актуализировать ее при деплое в staging/production `./app dbexport`
 - Тема поддерживает acf.json
 ![acf-sync](https://github.com/mksddn/wp-starter/assets/22976310/da78f925-ca72-4124-87a9-1e58dee0f398)
-
-
-### TO DO
- - [x] Подключить и настроить линтер
- - [x] Реализовать возможность работать с SCSS/SASS
- - [x] Преднастроить API для headless CMS
- - [x] Добавить languages
- - [x] Добавить шаблон формы для работы с mail.php

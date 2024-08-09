@@ -23,12 +23,12 @@ current_date_time=$(date +”%Y%m%d%H%M”)
 
 # alias wp="docker compose run --rm -e HOME=/tmp --user 33:33 wpcli"
 
-# if [ -f .env ]; then
-#     export $(echo $(cat .env | sed 's/#.*//g' | xargs) | envsubst)
-else
-    echo "Looks like you don't have .ENV file!"
-    exit
-# fi
+if [ -f .env ]; then
+    export $(echo $(cat .env | sed 's/#.*//g' | xargs) | envsubst)
+# else
+#     echo "Looks like you don't have .ENV file!"
+#     exit
+fi
 
 if [ "$1" == "up" ]; then
     docker compose up -d
@@ -161,9 +161,10 @@ elif [ "$1" == "clean" ]; then
     rm -rf wp-content/upgrade
     rm -rf wp-content/index.php
     rm -rf wp-content/themes/index.php
-    rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
-    # rm -rf wp-content/themes/$THEME_DIRECTORY/style.css
+    rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo wp-content/themes/twentytwentyone
+    rm -rf wp-content/themes/$THEME_DIRECTORY/composer.lock
     rm -rf wp-content/themes/$THEME_DIRECTORY/vendor
+    rm -rf wp-content/themes/$THEME_DIRECTORY/package-lock.json
     rm -rf wp-content/themes/$THEME_DIRECTORY/node_modules
     exit
 

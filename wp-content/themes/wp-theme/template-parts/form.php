@@ -1,10 +1,13 @@
 <form id="contactForm" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST">
 
   <?php
-  // Укажи получателя 👇
-  $recipient = get_bloginfo('admin_email');
+  global $wp;
+  // Укажи получателей 👇
+  $recipients = get_bloginfo('admin_email');
+  // Укажи скрытого получателя 👇
+  $bcc_recipient = '';
   // Укажи тему письма (заголовок) 👇
-  $subject = 'Название формы';
+  $subject = 'Новое сообщение с сайта ' . get_bloginfo('name');
   ?>
 
   <!-- Обязательно указывай атрибут name -->
@@ -15,9 +18,12 @@
   <!-- END Обязательно указывай атрибут name -->
 
   <!-- Скрытые поля не трогаем -->
-  <input type="hidden" name="recipient" value="<?php echo $recipient; ?>">
+  <input type="hidden" name="recipients" value="<?php echo $recipients; ?>">
+  <input type="hidden" name="bcc_recipient" value="<?php echo $bcc_recipient; ?>">
   <input type="hidden" name="subject" value="<?php echo $subject; ?>">
+  <input type="hidden" name="URL" value="<?php echo home_url($wp->request); ?>">
   <input type="hidden" name="action" value="send_contact_form">
+  <?php wp_nonce_field('send_contact_form_nonce', 'contact_form_nonce_field'); ?>
   <!-- END Скрытые поля не трогаем -->
 
 </form>
