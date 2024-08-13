@@ -4,7 +4,7 @@ function handle_contact_form_submission()
 {
   // Проверка nonce
   if (!isset($_POST['contact_form_nonce_field']) || !wp_verify_nonce($_POST['contact_form_nonce_field'], 'send_contact_form_nonce')) {
-    wp_die('Ошибка безопасности. Попробуйте снова.');
+    wp_send_json_error(array('message' => 'Security error. Please try again.'));
   }
 
   // Проверка наличия необходимых данных
@@ -22,7 +22,7 @@ function handle_contact_form_submission()
         $valid_emails[] = $recipient; // Если email корректный, добавляем его в список
       } else {
         // Если хотя бы один email некорректен, останавливаем выполнение и выводим ошибку
-        wp_die("Некорректный email адрес: $recipient");
+        wp_send_json_error(array('message' => "Incorrect email address: $recipient"));
       }
     }
 
@@ -47,20 +47,17 @@ function handle_contact_form_submission()
       $headers[] = 'Bcc: ' . $bcc_recipient . '';
       if (wp_mail($valid_emails, $subject, $body, $headers)) {
         // Если письмо успешно отправлено
-        wp_redirect(home_url('/?success=1'));
-        exit();
+        wp_send_json_success(array('message' => 'Message sent successfully!'));
       } else {
         // Если отправка письма не удалась
-        wp_redirect(home_url('/?error=1'));
-        exit();
+        wp_send_json_error(array('message' => 'Failed to send message. Please try again later.'));
       }
     } else {
-      wp_die('Не удалось отправить письмо: список получателей пуст или некорректен.');
+      wp_send_json_error(array('message' => 'The recipient list is empty or invalid.'));
     }
   } else {
     // Если данные отсутствуют, перенаправляем обратно на форму
-    wp_redirect(home_url('/?error=1'));
-    exit();
+    wp_send_json_error(array('message' => 'Please fill in all required fields.'));
   }
 }
 
