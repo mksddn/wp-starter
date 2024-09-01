@@ -147,12 +147,6 @@ elif [ "$1" == "watch" ]; then
     cd ../../..
     exit
 
-elif [ "$1" == "compile:css" ]; then
-    cd wp-content/themes/$THEME_DIRECTORY
-    npm run compile:css
-    cd ../../..
-    exit
-
 elif [ "$1" == "clean" ]; then
     docker compose down
     rm -rf .srv --force

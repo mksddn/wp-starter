@@ -23,8 +23,8 @@
 ### Команды NPM
 > Убедись, что у тебя установлен [Node.js](https://nodejs.org/en) `node --version` (рекомендую использовать [NVM](https://github.com/nvm-sh/nvm))
 - Установить зависимости `./app npm-install`
-- Отслеживать все файлы SASS/SCSS и компилировать их в css при их изменении `./app watch`
-- Компилировать файлы SASS/SCSS в css `./app compile:css`
+- Запустить режим разработки (hot-reload + компиляция sass/scss в css) `./app watch`
+> ВНИМАНИЕ! Команда работает только при запущенном проекте (`./app up`), а browser-sync работает на 3000 порту ([http://localhost:3000](http://localhost:3000/))
 
 ### Команды Composer
 > Убедись, что у тебя установлен [Composer](https://getcomposer.org/) `composer --version`
@@ -33,7 +33,7 @@
 - Проверить все файлы PHP согласно [WP Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/) `./app lint:wpcs`
 
 ## Советы
-- Устанавливаемые плагины можно указать в файле wp-settings/plugins.txt
+- Нужные плагины можно указать в файле wp-settings/plugins.txt, они устанавливаются автоматически при запуске проекта
 - Панель phpMyAdmin доступна по адресу [http://localhost:8080](http://localhost:8080/)
 - Не размещай важный код в **wp-config.php**, так как этот файл в каждой среде свой. Динамической является только директория **/wp-content/** с темой, плагинами и загрузками.
 - Не забывай передавать дамп БД другому разработчику или актуализировать ее при деплое в staging/production `./app dbexport`
