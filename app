@@ -15,7 +15,7 @@ export REPOSITORY_NAME=$(basename $(git rev-parse --show-toplevel))
 export THEME_DIRECTORY='wp-theme'
 
 plugins=()
-for line in $(cat wp-settings/plugins.txt); do
+for line in $(cat wp-content/themes/$THEME_DIRECTORY/plugins.txt); do
     plugins+=("$line")
 done
 
@@ -65,6 +65,8 @@ if [ "$1" == "up" ]; then
     done
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=$ACF_KEY" --allow-root --activate
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin activate --all
+
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli config set WP_DEBUG true --raw
 
     # xdg-open http://localhost:8000/wp-admin
     open http://localhost:8000/wp-admin

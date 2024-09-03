@@ -122,6 +122,12 @@ require get_template_directory() . '/inc/mail.php';
 
 
 /**
+ * Список плагинов
+ */
+require get_template_directory() . '/inc/plugins.php';
+
+
+/**
  * Добавляем страницу настроек ACF (и в меню тоже)
  */
 // if (function_exists('acf_add_options_page')) {
