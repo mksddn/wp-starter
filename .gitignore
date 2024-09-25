@@ -14,7 +14,8 @@ wp-content/themes/twentytwentythree
 wp-content/themes/twentytwentyfour
 vendor/
 node_modules/
-# wp-content/themes/*/composer.lock
+wp-content/themes/*/composer.lock
+wp-content/themes/*/package-lock.json
 
 .DS_Store
 __MACOSX

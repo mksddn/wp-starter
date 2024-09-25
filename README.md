@@ -23,8 +23,8 @@
 ### Команды NPM
 > Убедись, что у тебя установлен [Node.js](https://nodejs.org/en) `node --version` (рекомендую использовать [NVM](https://github.com/nvm-sh/nvm))
 - Установить зависимости `./app npm-install`
-- Запустить режим разработки (hot-reload + компиляция sass/scss в css) `./app watch`
-> ВНИМАНИЕ! Команда работает только при запущенном проекте (`./app up`), а browser-sync работает на 3000 порту ([http://localhost:3000](http://localhost:3000/))
+- Запустить режим разработки (browsersync + postcss) `./app watch`
+> ВНИМАНИЕ! Команда работает только при запущенном проекте (`./app up`), а hot-reload работает на 3000 порту ([http://localhost:3000](http://localhost:3000/))
 
 ### Команды Composer
 > Убедись, что у тебя установлен [Composer](https://getcomposer.org/) `composer --version`

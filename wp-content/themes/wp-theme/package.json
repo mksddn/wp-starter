@@ -4,14 +4,12 @@
     "browser-sync": "^3.0.2",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.41",
-    "postcss-cli": "^11.0.0",
-    "sass": "^1.77.8"
+    "postcss-cli": "^11.0.0"
   },
   "scripts": {
     "browsersync": "browser-sync start --config bs-config.js",
-    "sass": "sass --no-source-map --watch sass:css",
     "postcss": "postcss css/*.css --use autoprefixer -d css --no-map --watch",
-    "watch": "npm-run-all --parallel sass postcss browsersync"
+    "watch": "npm-run-all --parallel postcss browsersync"
   },
   "browserslist": [
     "last 3 versions",
