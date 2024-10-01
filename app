@@ -49,7 +49,7 @@ if [ "$1" == "up" ]; then
     done
 
     rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
-    mv wp-content/themes/* wp-content/themes/$THEME_DIRECTORY
+    # mv wp-content/themes/* wp-content/themes/$THEME_DIRECTORY
     # rm -rf wp-content/themes/$THEME_DIRECTORY/style.css
     # touch wp-content/themes/$THEME_DIRECTORY/style.css
     # echo "/**
