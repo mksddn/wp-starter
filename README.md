@@ -5,7 +5,7 @@
 1. Создай и заполни **.env** файл на основе .env.example (*или запроси детали у старшего разработчика*)
 > Убедись, что у тебя установлен [Docker](https://www.docker.com) `docker -v`
 2. Запусти приложение `./app up`
-3. [Импортируй дамп БД](#dbimport), если нужно `./app dbimport`
+3. [Импортируй дамп БД](#dbimport), если нужно `./app db-import`
 
 | username | password |
 | -------- | -------- |
@@ -16,8 +16,8 @@
 - Остановить приложение `./app stop`
 - Очистить проект (удалит все, кроме файлов темы) `./app clean`
 - Создать нового админа `./app user-create`
-- Экспорт базы данных (в корне репозитория создастся dbdump.sql) `./app dbexport`
-- <a id="dbimport"></a>Импорт базы данных `./app dbimport`
+- Экспорт базы данных (в корне репозитория создастся dbdump.sql) `./app db-export`
+- <a id="dbimport"></a>Импорт базы данных `./app db-import`
 > Для импорта размести в корне репозитория дамп БД (не архив) с расширением .sql
 
 ### Команды NPM
@@ -33,9 +33,8 @@
 - Проверить все файлы PHP согласно [WP Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/) `./app lint:wpcs`
 
 ## Советы
-- Нужные плагины можно указать в файле wp-settings/plugins.txt, они устанавливаются автоматически при запуске проекта
 - Панель phpMyAdmin доступна по адресу [http://localhost:8080](http://localhost:8080/)
 - Не размещай важный код в **wp-config.php**, так как этот файл в каждой среде свой. Динамической является только директория **/wp-content/** с темой, плагинами и загрузками.
-- Не забывай передавать дамп БД другому разработчику или актуализировать ее при деплое в staging/production `./app dbexport`
+- Не забывай передавать дамп БД другому разработчику или актуализировать ее при деплое в staging/production `./app db-export`
 - Тема поддерживает acf.json
 ![acf-sync](https://github.com/mksddn/wp-starter/assets/22976310/da78f925-ca72-4124-87a9-1e58dee0f398)

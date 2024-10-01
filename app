@@ -90,13 +90,13 @@ elif [ "$1" == "user-create" ]; then
 #     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli option update show_on_front page
 #     exit
 
-elif [ "$1" == "dbexport" ]; then
+elif [ "$1" == "db-export" ]; then
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export dbdump.sql --allow-root
     docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/dbdump.sql .
     docker compose run --rm wordpress rm -rf dbdump.sql
     exit
 
-elif [ "$1" == "dbimport" ]; then
+elif [ "$1" == "db-import" ]; then
     # docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export --tables=wp_users,wp_usermeta users.sql --allow-root
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export $current_date_time.sql --allow-root
     docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/$current_date_time.sql ./backup-db/
