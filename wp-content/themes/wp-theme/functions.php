@@ -24,6 +24,23 @@ add_action('after_setup_theme', 'theme_setup');
 
 
 /**
+ * Отключить XML-RPC
+ */
+add_filter('xmlrpc_enabled', '__return_false');
+
+/**
+ * Отключить X-Pingback в хэдере
+ */
+add_filter('wp_headers', 'disable_x_pingback');
+function disable_x_pingback($headers)
+{
+  unset($headers['X-Pingback']);
+
+  return $headers;
+}
+
+
+/**
  * Регистрируем меню
  */
 // register_nav_menus(array(
