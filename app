@@ -1,5 +1,5 @@
 export SITE_TITLE='MY WEBSITE'
-export ADMIN_USER='madmin'
+export ADMIN_USER='dev'
 export ADMIN_PASSWORD='root'
 export ADMIN_EMAIL='mr.madu@ya.ru'
 
@@ -63,7 +63,7 @@ if [ "$1" == "up" ]; then
     for value in "${plugins[@]}"; do
         docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin install $value
     done
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=$ACF_KEY" --allow-root --activate
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=$ACF_KEY" --activate
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin activate --all
 
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli config set WP_DEBUG true --raw
@@ -91,23 +91,23 @@ elif [ "$1" == "user-create" ]; then
 #     exit
 
 elif [ "$1" == "db-export" ]; then
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export dbdump.sql --allow-root
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export dbdump.sql
     docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/dbdump.sql .
     docker compose run --rm wordpress rm -rf dbdump.sql
     exit
 
 elif [ "$1" == "db-import" ]; then
-    # docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export --tables=wp_users,wp_usermeta users.sql --allow-root
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export $current_date_time.sql --allow-root
+    # docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export --tables=wp_users,wp_usermeta users.sql
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export $current_date_time.sql
     docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/$current_date_time.sql ./backup-db/
     docker compose run --rm wordpress rm -rf $current_date_time.sql
     docker cp *.sql ${REPOSITORY_NAME}_wpcli://var/www/html/
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db clean --allow-root
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db import *.sql --allow-root
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db clean
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db import *.sql
     docker compose run --rm wordpress rm -rf *.sql
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_DEV} ${URL_LOCAL}
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_PROD} ${URL_LOCAL}
-    # docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db import users.sql --allow-root
+    # docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db import users.sql
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli user create ${ADMIN_USER} ${ADMIN_EMAIL} --user_pass=${ADMIN_PASSWORD} --role=administrator --user_registered= --display_name= --user_nicename= --user_url= --nickname= --first_name= --last_name= --description= --rich_editing= --send-email= --porcelain=n
     exit
 
