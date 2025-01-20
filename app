@@ -102,7 +102,7 @@ elif [ "$1" == "db-import" ]; then
     docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/$current_date_time.sql ./backup-db/
     docker compose run --rm wordpress rm -rf $current_date_time.sql
     docker cp *.sql ${REPOSITORY_NAME}_wpcli://var/www/html/
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db clean
+    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db clean --yes
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db import *.sql
     docker compose run --rm wordpress rm -rf *.sql
     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_DEV} ${URL_LOCAL}
