@@ -48,7 +48,7 @@ if [ "$1" == "up" ]; then
         fi
     done
 
-    rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
+    rm -rf wp-content/themes/twenty*
     # mv wp-content/themes/* wp-content/themes/$THEME_DIRECTORY
     # rm -rf wp-content/themes/$THEME_DIRECTORY/style.css
     # touch wp-content/themes/$THEME_DIRECTORY/style.css
@@ -155,9 +155,10 @@ elif [ "$1" == "clean" ]; then
     rm -rf wp-content/plugins
     rm -rf wp-content/uploads
     rm -rf wp-content/upgrade
+    rm -rf wp-content/ai1wm-backups
     rm -rf wp-content/index.php
     rm -rf wp-content/themes/index.php
-    rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo wp-content/themes/twentytwentyone
+    rm -rf wp-content/themes/twenty*
     rm -rf wp-content/themes/$THEME_DIRECTORY/composer.lock
     rm -rf wp-content/themes/$THEME_DIRECTORY/vendor
     rm -rf wp-content/themes/$THEME_DIRECTORY/package-lock.json

@@ -1,3 +1,2 @@
-cyr2lat
 all-in-one-wp-migration
-wordpress-seo
+query-monitor

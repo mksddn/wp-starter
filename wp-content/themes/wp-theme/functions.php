@@ -41,35 +41,27 @@ function disable_x_pingback($headers)
 
 
 /**
- * Регистрируем меню
- */
-// register_nav_menus(array(
-//   'main_menu' => esc_html__('Основное меню'),
-//   // 'footer_menu' => esc_html__('Дополнительное меню'),
-// ));
-
-
-/**
  * Подключаем стили и скрипты
  */
 require get_template_directory() . '/inc/styles-n-scripts.php';
 
 
 /**
- * Настройки WooCommerce
+ * Настройки поиска
  */
-// require get_template_directory() . '/inc/woocommerce-settings.php';
+require get_template_directory() . '/inc/search-settings.php';
 
 
 /**
- * Регистрируем новые размеры изображений
+ * Отключаем комментарии
  */
-// if (function_exists('add_image_size')) {
-//   // 300 в ширину и без ограничения в высоту
-//   add_image_size('category-thumb', 300, 9999);
-//   // Кадрирование изображения
-//   add_image_size('homepage-thumb', 220, 180, true);
-// }
+require get_template_directory() . '/inc/disable-comments.php';
+
+
+/**
+ * Mail обработчик
+ */
+require get_template_directory() . '/inc/mail.php';
 
 
 /**
@@ -91,57 +83,29 @@ function delete_intermediate_image_sizes($sizes)
 
 
 /**
- * REST API роуты
+ * Регистрируем новые размеры изображений
  */
-require get_template_directory() . '/inc/api/api.php';
-
-
-
-/**
- * Миниатюры в списке записей в админке
- */
-require get_template_directory() . '/inc/thumbnail-columns.php';
-
-
-/**
- * Настройки поиска
- */
-require get_template_directory() . '/inc/search-settings.php';
-
-
-/**
- * Добавляем свои классы в body (иногда нужно, тк верстальщики прописывают стили к кастомным классам)
- */
-// function my_plugin_body_class($classes)
-// {
-//   $classes[] = 'body-header-fixed';
-//   return $classes;
+// if (function_exists('add_image_size')) {
+//   // 300 в ширину и без ограничения в высоту
+//   add_image_size('category-thumb', 300, 9999);
+//   // Кадрирование изображения
+//   add_image_size('homepage-thumb', 220, 180, true);
 // }
-// add_filter('body_class', 'my_plugin_body_class');
 
 
 /**
- * Поддержка SVG
+ * Регистрируем меню
  */
-require get_template_directory() . '/inc/svg-support.php';
+// register_nav_menus(array(
+//   'main_menu' => esc_html__('Основное меню'),
+//   // 'footer_menu' => esc_html__('Дополнительное меню'),
+// ));
 
 
 /**
- * Отключаем комментарии
+ * Настройки REST API
  */
-require get_template_directory() . '/inc/disable-comments.php';
-
-
-/**
- * Mail обработчик
- */
-require get_template_directory() . '/inc/mail.php';
-
-
-/**
- * Список плагинов
- */
-require get_template_directory() . '/inc/plugins.php';
+// require get_template_directory() . '/inc/api/api.php';
 
 
 /**
@@ -160,6 +124,17 @@ require get_template_directory() . '/inc/plugins.php';
 
 
 /**
+ * Добавляем свои классы в body (иногда нужно, тк верстальщики прописывают стили к кастомным классам)
+ */
+// function my_plugin_body_class($classes)
+// {
+//   $classes[] = 'body-header-fixed';
+//   return $classes;
+// }
+// add_filter('body_class', 'my_plugin_body_class');
+
+
+/**
  * Добавляем описание (отрывок) к странице
  */
 // function add_excerpt_page()
@@ -167,12 +142,6 @@ require get_template_directory() . '/inc/plugins.php';
 //   add_post_type_support('page', 'excerpt');
 // }
 // add_action('init', 'add_excerpt_page');
-
-
-/**
- * Отключаем редактор Гутенберг
- */
-// add_filter('use_block_editor_for_post', '__return_false', 10);
 
 
 /**
@@ -201,3 +170,9 @@ require get_template_directory() . '/inc/plugins.php';
  * Убираем лишние теги в формах CF7
  */ 
 // require get_template_directory() . '/inc/wpcf7-form-cleaner.php';
+
+
+/**
+ * Настройки WooCommerce
+ */
+// require get_template_directory() . '/inc/woocommerce-settings.php';
