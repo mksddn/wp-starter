@@ -1,168 +1,159 @@
-export SITE_TITLE='MY WEBSITE'
-export ADMIN_USER='dev'
-export ADMIN_PASSWORD='root'
-export ADMIN_EMAIL='mr.madu@ya.ru'
+#!/bin/bash
 
-# Все урлы указываем без слэша / в конце адреса, иначе импорт БД не сработает.
-URL_LOCAL=http://localhost:8000
-URL_DEV=https://test.site
-URL_PROD=https://prod.site
-
-# THEME_DIRECTORY='wp-theme' # Не меняем для корректной работы CI/CD.
-# THEME_SLUG='wp-theme' # Название темы. Латиница без пробелов и спецсимволов.
-
-export REPOSITORY_NAME=$(basename $(git rev-parse --show-toplevel))
-export THEME_DIRECTORY='wp-theme'
-
-plugins=()
-for line in $(cat wp-content/themes/$THEME_DIRECTORY/plugins.txt); do
-    plugins+=("$line")
-done
-
-current_date_time=$(date +”%Y%m%d%H%M”)
-
-# alias wp="docker compose run --rm -e HOME=/tmp --user 33:33 wpcli"
-
-if [ -f .env ]; then
-    export $(echo $(cat .env | sed 's/#.*//g' | xargs) | envsubst)
-# else
-#     echo "Looks like you don't have .ENV file!"
-#     exit
+# Проверка наличия .env файла
+if [ ! -f .env ]; then
+    if [ -f .env.example ]; then
+        cp .env.example .env
+        echo "The .env file was created from .env.example. Check the settings in .env."
+    else
+        echo "Error: .env.example was not found, it is not possible to create .env."
+        exit 1
+    fi
 fi
 
+# Импорт переменных из .env
+if [ -f .env ]; then
+    export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
+else
+    echo ".env file not found. Please create one."
+    exit 1
+fi
+
+export REPOSITORY_NAME=$(basename $(git rev-parse --show-toplevel))
+
+URL_LOCAL=$URL_LOCAL
+URL_DEV=$URL_DEV
+URL_PROD=$URL_PROD
+THEME_DIRECTORY=$THEME_DIRECTORY 
+
+# WP-CLI вызов через функцию
+wpcli() {
+    docker compose run --rm -e HOME=/tmp wpcli "$@"
+}
+
+# Считывание списка плагинов
+read_plugins() {
+    local plugins=()
+    while IFS= read -r line; do
+        plugins+=("$line")
+    done <wp-content/themes/$THEME_DIRECTORY/plugins.txt
+    echo "${plugins[@]}"
+}
+
+# Установка плагинов
+install_plugins() {
+    local plugins=($(read_plugins))
+    for plugin in "${plugins[@]}"; do
+        wpcli plugin install "$plugin"
+    done
+    wpcli plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=$ACF_KEY" --activate
+}
+
+# Запуск приложения
 if [ "$1" == "up" ]; then
     docker compose up -d
 
     retries=0
-    while :; do
-        if docker compose run --rm -e HOME=/tmp --user 33:33 wpcli core install --url=$URL_LOCAL --title=$URL_LOCAL --admin_user=$ADMIN_USER --admin_password=$ADMIN_PASSWORD --admin_email=$ADMIN_EMAIL; then
-            break
-        else
-            retries=$((retries + 1))
-            echo "Couldn't connect to DB. Try - ${retries}. Sleeping 5 seconds and will retry ..."
-            sleep 5
-        fi
-        if [ "${retries}" -eq "30" ]; then
-            echo "Couldn't connect to DB 30 times. Exiting."
+    until wpcli core install \
+        --url=$URL_LOCAL --title=$URL_LOCAL \
+        --admin_user=$ADMIN_USER --admin_password=$ADMIN_PASSWORD --admin_email=$ADMIN_EMAIL; do
+        retries=$((retries + 1))
+        echo "Couldn't connect to DB. Try - ${retries}. Retrying in 5 seconds..."
+        sleep 3
+        if [ "$retries" -eq 30 ]; then
+            echo "Failed to connect to DB after 30 attempts. Exiting."
             exit 1
         fi
     done
 
     rm -rf wp-content/themes/twenty*
-    # mv wp-content/themes/* wp-content/themes/$THEME_DIRECTORY
-    # rm -rf wp-content/themes/$THEME_DIRECTORY/style.css
-    # touch wp-content/themes/$THEME_DIRECTORY/style.css
-    # echo "/**
-    # * Theme Name: $THEME_SLUG
-    # */" | cat - wp-content/themes/$THEME_DIRECTORY/style.css >temp && mv temp wp-content/themes/$THEME_DIRECTORY/style.css
-
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli theme activate $THEME_DIRECTORY
-
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin uninstall hello
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin uninstall akismet
-    for value in "${plugins[@]}"; do
-        docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin install $value
-    done
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=$ACF_KEY" --activate
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli plugin activate --all
-
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli config set WP_DEBUG true --raw
-
-    # xdg-open http://localhost:8000/wp-admin
-    open http://localhost:8000/wp-admin
-    # start http://localhost:8000/wp-admin
-    # python3 -m webbrowser http://localhost:8000/wp-admin
+    wpcli theme activate $THEME_DIRECTORY
+    wpcli plugin uninstall hello akismet
+    install_plugins
+    wpcli plugin activate --all
+    wpcli config set WP_DEBUG true --raw
+    open $URL_LOCAL/wp-admin
     exit
 
+# Остановка приложения
 elif [ "$1" == "stop" ]; then
     docker compose stop
     exit
 
+# Создание нового юзера (админа)
 elif [ "$1" == "user-create" ]; then
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli user create --prompt --role=administrator --user_registered= --display_name= --user_nicename= --user_url= --nickname= --first_name= --last_name= --description= --rich_editing= --send-email= --porcelain=n
+    wpcli user create --prompt --role=administrator \
+        --user_registered= --display_name= --user_nicename= --user_url= --nickname= \
+        --first_name= --last_name= --description= --rich_editing= --send-email= --porcelain=n
     exit
 
-# elif [ "$1" == "config" ]; then
-#     # rm -rf wp-content/themes/twentytwentyfour wp-content/themes/twentytwentythree wp-content/themes/twentytwentytwo
-#     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli rewrite structure '/%postname%/'
-#     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli post update 2 --post_title=Home --post_name=home
-#     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli option update page_on_front 2
-#     docker compose run --rm -e HOME=/tmp --user 33:33 wpcli option update show_on_front page
-#     exit
-
+# Экспорт БД
 elif [ "$1" == "db-export" ]; then
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export dbdump.sql
+    wpcli db export dbdump.sql
     docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/dbdump.sql .
     docker compose run --rm wordpress rm -rf dbdump.sql
     exit
 
+# Импорт БД
 elif [ "$1" == "db-import" ]; then
-    # docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export --tables=wp_users,wp_usermeta users.sql
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db export $current_date_time.sql
+    current_date_time=$(date +%Y%m%d%H%M)
+    # wpcli db export --tables=wp_users,wp_usermeta users.sql
+    wpcli db export $current_date_time.sql
     docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/$current_date_time.sql ./backup-db/
     docker compose run --rm wordpress rm -rf $current_date_time.sql
     docker cp *.sql ${REPOSITORY_NAME}_wpcli://var/www/html/
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db clean --yes
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db import *.sql
+    wpcli db clean --yes
+    wpcli db import *.sql
     docker compose run --rm wordpress rm -rf *.sql
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_DEV} ${URL_LOCAL}
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli search-replace ${URL_PROD} ${URL_LOCAL}
-    # docker compose run --rm -e HOME=/tmp --user 33:33 wpcli db import users.sql
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli user create ${ADMIN_USER} ${ADMIN_EMAIL} --user_pass=${ADMIN_PASSWORD} --role=administrator --user_registered= --display_name= --user_nicename= --user_url= --nickname= --first_name= --last_name= --description= --rich_editing= --send-email= --porcelain=n
+    wpcli search-replace ${URL_DEV} ${URL_LOCAL}
+    wpcli search-replace ${URL_PROD} ${URL_LOCAL}
+    # wpcli db import users.sql
+    wpcli user create "$ADMIN_USER" "$ADMIN_EMAIL" --user_pass="$ADMIN_PASSWORD" --role=administrator
     exit
 
+# Режим дебага
 elif [ "$1" == "debug-on" ]; then
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli config set WP_DEBUG true --raw
+    wpcli config set WP_DEBUG true --raw
     exit
-
 elif [ "$1" == "debug-off" ]; then
-    docker compose run --rm -e HOME=/tmp --user 33:33 wpcli config set WP_DEBUG false --raw
+    wpcli config set WP_DEBUG false --raw
     exit
 
+# Команды Composer
 elif [ "$1" == "composer-install" ]; then
     cd wp-content/themes/$THEME_DIRECTORY
     composer install
     cd ../../..
     exit
-
 elif [ "$1" == "lint:php" ]; then
     cd wp-content/themes/$THEME_DIRECTORY
     composer lint:php
     cd ../../..
     exit
-
 elif [ "$1" == "lint:wpcs" ]; then
     cd wp-content/themes/$THEME_DIRECTORY
     composer lint:wpcs
     cd ../../..
     exit
 
+# Команды NPM
 elif [ "$1" == "npm-install" ]; then
     cd wp-content/themes/$THEME_DIRECTORY
     npm install
     cd ../../..
     exit
-
 elif [ "$1" == "watch" ]; then
     cd wp-content/themes/$THEME_DIRECTORY
     npm run watch
     cd ../../..
     exit
 
+# Очистка
 elif [ "$1" == "clean" ]; then
     docker compose down
-    rm -rf .srv --force
-    rm -rf wp-content/plugins
-    rm -rf wp-content/uploads
-    rm -rf wp-content/upgrade
-    rm -rf wp-content/ai1wm-backups
-    rm -rf wp-content/index.php
-    rm -rf wp-content/themes/index.php
-    rm -rf wp-content/themes/twenty*
-    rm -rf wp-content/themes/$THEME_DIRECTORY/composer.lock
-    rm -rf wp-content/themes/$THEME_DIRECTORY/vendor
-    rm -rf wp-content/themes/$THEME_DIRECTORY/package-lock.json
-    rm -rf wp-content/themes/$THEME_DIRECTORY/node_modules
+    rm -rf .srv wp-content/plugins wp-content/uploads wp-content/upgrade wp-content/ai1wm-backups
+    rm -rf wp-content/index.php wp-content/themes/index.php wp-content/themes/twenty*
+    rm -rf wp-content/themes/$THEME_DIRECTORY/{composer.lock,vendor,package-lock.json,node_modules}
     exit
 
 fi
