@@ -19,7 +19,7 @@ else
     exit 1
 fi
 
-export REPOSITORY_NAME=$(basename $(git rev-parse --show-toplevel))
+export REPOSITORY_NAME=$(basename $(git rev-parse --show-toplevel 2>/dev/null || echo $(pwd)))
 
 URL_LOCAL=$URL_LOCAL
 URL_DEV=$URL_DEV
@@ -154,6 +154,7 @@ elif [ "$1" == "clean" ]; then
     rm -rf .srv wp-content/plugins wp-content/uploads wp-content/upgrade wp-content/ai1wm-backups
     rm -rf wp-content/index.php wp-content/themes/index.php wp-content/themes/twenty*
     rm -rf wp-content/themes/$THEME_DIRECTORY/{composer.lock,vendor,package-lock.json,node_modules}
+    rm -rf dbdump.sql
     exit
 
 fi
