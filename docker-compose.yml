@@ -4,11 +4,13 @@ services:
     container_name: "${REPOSITORY_NAME}_wordpress"
     depends_on:
       - mysql
+    links:
+      - mysql
     ports:
       - ${WORDPRESS_PORT}:80
     user: root
     environment:
-      WORDPRESS_DB_HOST: ${DB_HOST}
+      WORDPRESS_DB_HOST: ${DB_HOST}:${DB_PORT}
       WORDPRESS_DB_USER: ${DB_USER}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
       WORDPRESS_DB_NAME: ${DB_NAME}
@@ -19,13 +21,17 @@ services:
       - ./custom.ini:/usr/local/etc/php/conf.d/custom.ini
 
   wpcli:
+    depends_on:
+      - mysql
+      - wordpress
     image: wordpress:cli
     container_name: "${REPOSITORY_NAME}_wpcli"
-    depends_on:
-      - wordpress
-      - mysql
+    links:
+      - mysql:mysql
+    entrypoint: wp
+    command: "--info"
     environment:
-      WORDPRESS_DB_HOST: ${DB_HOST}
+      WORDPRESS_DB_HOST: ${DB_HOST}:${DB_PORT}
       WORDPRESS_DB_USER: ${DB_USER}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
       WORDPRESS_DB_NAME: ${DB_NAME}
@@ -34,29 +40,25 @@ services:
       - ./.srv/log/:/var/log
       - ./wp-content:/var/www/html/wp-content
       - ./custom.ini:/usr/local/etc/php/conf.d/custom.ini
-    entrypoint: ["wp"]
-    command: ["--info"]
 
   mysql:
-    image: mariadb:10.6.5
+    image: mariadb:10.5.8
     container_name: "${REPOSITORY_NAME}_mysql"
     ports:
-      - ${MYSQL_PORT}:3306
+      - ${DB_PORT}:3306
+    volumes:
+      - ./.srv/database:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - ./.srv/database:/var/lib/mysql
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: "${REPOSITORY_NAME}_phpmyadmin"
-    depends_on:
-      - mysql
     ports:
       - ${PHPMYADMIN_PORT}:80
     environment:
-      PMA_HOST: mysql
-      MYSQL_ROOT_PASSWORD: wordpress
+      PMA_HOST: ${DB_HOST}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
