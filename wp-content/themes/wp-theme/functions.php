@@ -65,6 +65,28 @@ require get_template_directory() . '/inc/mail.php';
 
 
 /**
+ * Создаем страницы программно
+ */
+require get_template_directory() . '/inc/hard-pages.php';
+
+
+/**
+ * Визульно разделяем поля повторителя в ACF
+ */
+if (class_exists('ACF')) {
+  function stylize_acf_repeater_fields()
+  {
+    echo '<style>
+        .acf-repeater tbody .acf-row:nth-child(even)>.acf-row-handle {
+           filter: brightness(0.9);
+        }
+    </style>';
+  }
+  add_action('admin_head', 'stylize_acf_repeater_fields');
+}
+
+
+/**
  * Отключаем создание миниатюр изображений для указанных размеров
  */
 add_filter('intermediate_image_sizes', 'delete_intermediate_image_sizes');
@@ -168,7 +190,7 @@ function delete_intermediate_image_sizes($sizes)
 
 /**
  * Убираем лишние теги в формах CF7
- */ 
+ */
 // require get_template_directory() . '/inc/wpcf7-form-cleaner.php';
 
 
