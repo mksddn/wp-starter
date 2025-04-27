@@ -1,16 +1,16 @@
 <?php
 
-// Программное создание страниц
-function create_protected_pages()
-{
-  // Глобально сохраняем массив, чтобы использовать в ACF-хуках
-  $GLOBALS['protected_pages'] = [
-    'Home Page' => ['slug' => 'home', 'page_type' => 'home_page'],
-    // 'About Page' => ['slug' => 'about', 'page_type' => 'about_page'],
-    // 'Contact Page' => ['slug' => 'contact', 'page_type' => 'contact_page'],
-  ];
+// Подключаем файл с конфигурацией страниц
+require_once __DIR__ . '/hard-pages-list.php';
 
-  foreach ($GLOBALS['protected_pages'] as $title => $data) {
+// Программное создание страниц
+function create_hard_pages()
+{
+  if (!isset($GLOBALS['hard_pages']) || !is_array($GLOBALS['hard_pages'])) {
+    return;
+  }
+
+  foreach ($GLOBALS['hard_pages'] as $title => $data) {
     $slug = $data['slug'];
 
     // Проверяем, существует ли уже страница с таким слагом
@@ -28,47 +28,47 @@ function create_protected_pages()
 
       // Добавляем мета-данные
       if ($page_id) {
-        update_post_meta($page_id, '_protected_page', 'yes');
+        update_post_meta($page_id, '_hard_page', 'yes');
         update_post_meta($page_id, 'page_type', $data['page_type']);
       }
     }
   }
 }
-add_action('init', 'create_protected_pages');
+add_action('init', 'create_hard_pages');
 
-// Запрет удаления защищённых страниц
-function prevent_protected_page_deletion($post_id)
-{
-  if (get_post_meta($post_id, '_protected_page', true) === 'yes') {
-    wp_die(__('This page is protected and cannot be deleted.'));
-  }
-}
-add_action('before_delete_post', 'prevent_protected_page_deletion');
+// // Запрет удаления созданных страниц
+// function prevent_hard_page_deletion($post_id)
+// {
+//   if (get_post_meta($post_id, '_hard_page', true) === 'yes') {
+//     wp_die(__('This page is hard and cannot be deleted.'));
+//   }
+// }
+// add_action('before_delete_post', 'prevent_hard_page_deletion');
 
-// Скрытие кнопки удаления в админке
-function hide_delete_for_protected_pages($actions, $post)
-{
-  if ($post->post_type === 'page' && get_post_meta($post->ID, '_protected_page', true) === 'yes') {
-    unset($actions['trash']);
-  }
-  return $actions;
-}
-add_filter('page_row_actions', 'hide_delete_for_protected_pages', 10, 2);
+// // Скрытие кнопки удаления в админке
+// function hide_delete_for_hard_pages($actions, $post)
+// {
+//   if ($post->post_type === 'page' && get_post_meta($post->ID, '_hard_page', true) === 'yes') {
+//     unset($actions['trash']);
+//   }
+//   return $actions;
+// }
+// add_filter('page_row_actions', 'hide_delete_for_hard_pages', 10, 2);
 
-// Блокировка удаления через REST API
-function prevent_rest_delete_protected_page($response, $post)
-{
-  if ($post->post_type === 'page' && get_post_meta($post->ID, '_protected_page', true) === 'yes') {
-    return new WP_Error('protected_page', __('This page is protected and cannot be deleted.'), ['status' => 403]);
-  }
-  return $response;
-}
-add_filter('rest_pre_dispatch', function ($result, $server, $request) {
-  if ($request->get_method() === 'DELETE' && isset($request['id'])) {
-    return prevent_rest_delete_protected_page(null, get_post($request['id']));
-  }
-  return $result;
-}, 10, 3);
+// // Блокировка удаления через REST API
+// function prevent_rest_delete_hard_page($response, $post)
+// {
+//   if ($post->post_type === 'page' && get_post_meta($post->ID, '_hard_page', true) === 'yes') {
+//     return new WP_Error('hard_page', __('This page is hard and cannot be deleted.'), ['status' => 403]);
+//   }
+//   return $response;
+// }
+// add_filter('rest_pre_dispatch', function ($result, $server, $request) {
+//   if ($request->get_method() === 'DELETE' && isset($request['id'])) {
+//     return prevent_rest_delete_hard_page(null, get_post($request['id']));
+//   }
+//   return $result;
+// }, 10, 3);
 
 
 // ==========================
@@ -78,14 +78,14 @@ add_filter('rest_pre_dispatch', function ($result, $server, $request) {
 if (function_exists('acf_add_local_field_group')) {
   // 1. Добавляем новое условие
   add_filter('acf/location/rule_types', function ($choices) {
-    $choices['Custom fields']['custom_field_value'] = 'Custom Field Value';
+    $choices['Hard Pages']['hard_page'] = 'Hard Page Type';
     return $choices;
   });
 
-  // 2. Автоматическое заполнение значений из $protected_pages
-  add_filter('acf/location/rule_values/custom_field_value', function ($choices) {
-    if (isset($GLOBALS['protected_pages']) && is_array($GLOBALS['protected_pages'])) {
-      foreach ($GLOBALS['protected_pages'] as $page) {
+  // 2. Автоматическое заполнение значений из $hard_pages
+  add_filter('acf/location/rule_values/hard_page', function ($choices) {
+    if (isset($GLOBALS['hard_pages']) && is_array($GLOBALS['hard_pages'])) {
+      foreach ($GLOBALS['hard_pages'] as $page) {
         if (!empty($page['page_type'])) {
           $value = $page['page_type'];
           $choices[$value] = $value;
@@ -96,7 +96,7 @@ if (function_exists('acf_add_local_field_group')) {
   });
 
   // 3. Логика сравнения
-  add_filter('acf/location/rule_match/custom_field_value', function ($match, $rule, $options) {
+  add_filter('acf/location/rule_match/hard_page', function ($match, $rule, $options) {
     $post_id = $options['post_id'];
 
     if (!$post_id || get_post_type($post_id) !== 'page') {

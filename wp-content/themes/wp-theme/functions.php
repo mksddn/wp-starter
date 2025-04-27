@@ -43,31 +43,31 @@ function disable_x_pingback($headers)
 /**
  * Подключаем стили и скрипты
  */
-require get_template_directory() . '/inc/styles-n-scripts.php';
+require_once get_template_directory() . '/inc/styles-n-scripts.php';
 
 
 /**
  * Настройки поиска
  */
-require get_template_directory() . '/inc/search-settings.php';
+require_once get_template_directory() . '/inc/search-settings.php';
 
 
 /**
  * Отключаем комментарии
  */
-require get_template_directory() . '/inc/disable-comments.php';
+require_once get_template_directory() . '/inc/disable-comments.php';
 
 
 /**
  * Mail обработчик
  */
-require get_template_directory() . '/inc/mail.php';
+require_once get_template_directory() . '/inc/mail.php';
 
 
 /**
  * Создаем страницы программно
  */
-require get_template_directory() . '/inc/hard-pages.php';
+require_once get_template_directory() . '/inc/hard-pages.php';
 
 
 /**
@@ -127,7 +127,7 @@ function delete_intermediate_image_sizes($sizes)
 /**
  * Настройки REST API
  */
-// require get_template_directory() . '/inc/api/api.php';
+// require_once get_template_directory() . '/inc/api/api.php';
 
 
 /**
@@ -191,10 +191,10 @@ function delete_intermediate_image_sizes($sizes)
 /**
  * Убираем лишние теги в формах CF7
  */
-// require get_template_directory() . '/inc/wpcf7-form-cleaner.php';
+// require_once get_template_directory() . '/inc/wpcf7-form-cleaner.php';
 
 
 /**
  * Настройки WooCommerce
  */
-// require get_template_directory() . '/inc/woocommerce-settings.php';
+// require_once get_template_directory() . '/inc/woocommerce-settings.php';
