@@ -31,6 +31,11 @@ function create_hard_pages()
         update_post_meta($page_id, '_hard_page', 'yes');
         update_post_meta($page_id, 'page_type', $data['page_type']);
       }
+    } else {
+      // Обновляем мета-данные для существующей страницы
+      $existing_page_id = $existing_page->ID;
+      update_post_meta($existing_page_id, '_hard_page', 'yes');
+      update_post_meta($existing_page_id, 'page_type', $data['page_type']);
     }
   }
 }
