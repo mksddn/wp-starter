@@ -113,10 +113,26 @@ elif [ "$1" == "db-import" ]; then
 
 # Режим дебага
 elif [ "$1" == "debug-on" ]; then
-    wpcli config set WP_DEBUG true --raw
+    if [ "$ENVIRONMENT" == "production" ]; then
+        # Режим продакшена: только логирование ошибок
+        wpcli config set WP_DEBUG true --raw
+        wpcli config set WP_DEBUG_LOG true --raw
+        wpcli config set WP_DEBUG_DISPLAY false --raw
+        wpcli config set SCRIPT_DEBUG false --raw
+    else
+        # Режим разработки: показывать все ошибки и включить отладку скриптов
+        wpcli config set WP_DEBUG true --raw
+        wpcli config set WP_DEBUG_LOG true --raw
+        wpcli config set WP_DEBUG_DISPLAY true --raw
+        wpcli config set SCRIPT_DEBUG true --raw
+    fi
     exit
 elif [ "$1" == "debug-off" ]; then
+    # Отключить всю отладку независимо от окружения
     wpcli config set WP_DEBUG false --raw
+    wpcli config set WP_DEBUG_LOG false --raw
+    wpcli config set WP_DEBUG_DISPLAY false --raw
+    wpcli config set SCRIPT_DEBUG false --raw
     exit
 
 # Команды Composer
