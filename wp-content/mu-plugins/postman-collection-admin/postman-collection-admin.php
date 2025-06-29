@@ -545,8 +545,7 @@ function postman_collection_generate_and_download() {
                                     'name' => 'John Doe',
                                     'email' => 'john.doe@example.com',
                                     'message' => 'This is a test message from the form.',
-                                    'phone' => '+1234567890',
-                                    'subject' => 'Test Subject'
+                                    'phone' => '+1234567890'
                                 ], JSON_PRETTY_PRINT)
                             ],
                             'url' => [

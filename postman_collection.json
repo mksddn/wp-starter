@@ -1,0 +1,1458 @@
+{
+    "info": {
+        "name": "http://localhost:8000 API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Basic Routes",
+            "item": [
+                {
+                    "name": "Pages",
+                    "item": [
+                        {
+                            "name": "List of Pages",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/pages?_fields=id,slug,title",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "pages"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "_fields",
+                                            "value": "id,slug,title"
+                                        }
+                                    ]
+                                },
+                                "description": "Get list of all pages"
+                            }
+                        },
+                        {
+                            "name": "Page by Slug",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/pages?slug=sample-page&acf_format=standard&_fields=title,acf,content",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "pages"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "slug",
+                                            "value": "sample-page"
+                                        },
+                                        {
+                                            "key": "acf_format",
+                                            "value": "standard"
+                                        },
+                                        {
+                                            "key": "_fields",
+                                            "value": "title,acf,content"
+                                        }
+                                    ]
+                                },
+                                "description": "Get specific Page by slug with ACF fields"
+                            }
+                        },
+                        {
+                            "name": "Page by ID",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/pages/{{PageID}}?acf_format=standard&_fields=title,acf,content",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "pages",
+                                        "{{PageID}}"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "acf_format",
+                                            "value": "standard"
+                                        },
+                                        {
+                                            "key": "_fields",
+                                            "value": "title,acf,content"
+                                        }
+                                    ]
+                                },
+                                "description": "Get specific Page by ID with ACF fields"
+                            }
+                        },
+                        {
+                            "name": "Create Page",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Sample Page Title\",\n    \"content\": \"Sample Page content here.\",\n    \"excerpt\": \"Sample Page excerpt.\",\n    \"status\": \"draft\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/pages",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "pages"
+                                    ]
+                                },
+                                "description": "Create new Page"
+                            }
+                        },
+                        {
+                            "name": "Update Page",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Updated Page Title\",\n    \"content\": \"Updated Page content here.\",\n    \"excerpt\": \"Updated Page excerpt.\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/pages/{{PageID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "pages",
+                                        "{{PageID}}"
+                                    ]
+                                },
+                                "description": "Update existing Page by ID"
+                            }
+                        },
+                        {
+                            "name": "Delete Page",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/pages/{{PageID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "pages",
+                                        "{{PageID}}"
+                                    ]
+                                },
+                                "description": "Delete Page by ID"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Posts",
+                    "item": [
+                        {
+                            "name": "List of Posts",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/posts?_fields=id,slug,title",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "posts"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "_fields",
+                                            "value": "id,slug,title"
+                                        }
+                                    ]
+                                },
+                                "description": "Get list of all posts"
+                            }
+                        },
+                        {
+                            "name": "Post by Slug",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/posts?slug=hello-world&acf_format=standard&_fields=title,acf,content",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "posts"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "slug",
+                                            "value": "hello-world"
+                                        },
+                                        {
+                                            "key": "acf_format",
+                                            "value": "standard"
+                                        },
+                                        {
+                                            "key": "_fields",
+                                            "value": "title,acf,content"
+                                        }
+                                    ]
+                                },
+                                "description": "Get specific Post by slug with ACF fields"
+                            }
+                        },
+                        {
+                            "name": "Post by ID",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/posts/{{PostID}}?acf_format=standard&_fields=title,acf,content",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "posts",
+                                        "{{PostID}}"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "acf_format",
+                                            "value": "standard"
+                                        },
+                                        {
+                                            "key": "_fields",
+                                            "value": "title,acf,content"
+                                        }
+                                    ]
+                                },
+                                "description": "Get specific Post by ID with ACF fields"
+                            }
+                        },
+                        {
+                            "name": "Create Post",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Sample Post Title\",\n    \"content\": \"Sample Post content here.\",\n    \"excerpt\": \"Sample Post excerpt.\",\n    \"status\": \"draft\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/posts",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "posts"
+                                    ]
+                                },
+                                "description": "Create new Post"
+                            }
+                        },
+                        {
+                            "name": "Update Post",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Updated Post Title\",\n    \"content\": \"Updated Post content here.\",\n    \"excerpt\": \"Updated Post excerpt.\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/posts/{{PostID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "posts",
+                                        "{{PostID}}"
+                                    ]
+                                },
+                                "description": "Update existing Post by ID"
+                            }
+                        },
+                        {
+                            "name": "Delete Post",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/posts/{{PostID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "posts",
+                                        "{{PostID}}"
+                                    ]
+                                },
+                                "description": "Delete Post by ID"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Categories",
+                    "item": [
+                        {
+                            "name": "List of Categories",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/categories",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "categories"
+                                    ],
+                                    "query": []
+                                },
+                                "description": "Get list of all categories"
+                            }
+                        },
+                        {
+                            "name": "Category by Slug",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/categories?slug=uncategorized",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "categories"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "slug",
+                                            "value": "uncategorized"
+                                        }
+                                    ]
+                                },
+                                "description": "Get specific Category by slug"
+                            }
+                        },
+                        {
+                            "name": "Category by ID",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/categories/{{CategoryID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "categories",
+                                        "{{CategoryID}}"
+                                    ],
+                                    "query": []
+                                },
+                                "description": "Get specific Category by ID"
+                            }
+                        },
+                        {
+                            "name": "Create Category",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Sample Category Title\",\n    \"content\": \"Sample Category content here.\",\n    \"excerpt\": \"Sample Category excerpt.\",\n    \"status\": \"draft\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/categories",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "categories"
+                                    ]
+                                },
+                                "description": "Create new Category"
+                            }
+                        },
+                        {
+                            "name": "Update Category",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Updated Category Title\",\n    \"content\": \"Updated Category content here.\",\n    \"excerpt\": \"Updated Category excerpt.\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/categories/{{CategoryID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "categories",
+                                        "{{CategoryID}}"
+                                    ]
+                                },
+                                "description": "Update existing Category by ID"
+                            }
+                        },
+                        {
+                            "name": "Delete Category",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/categories/{{CategoryID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "categories",
+                                        "{{CategoryID}}"
+                                    ]
+                                },
+                                "description": "Delete Category by ID"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Tags",
+                    "item": [
+                        {
+                            "name": "List of Tags",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/tags",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "tags"
+                                    ],
+                                    "query": []
+                                },
+                                "description": "Get list of all tags"
+                            }
+                        },
+                        {
+                            "name": "Tag by Slug",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/tags?slug=example",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "tags"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "slug",
+                                            "value": "example"
+                                        }
+                                    ]
+                                },
+                                "description": "Get specific Tag by slug"
+                            }
+                        },
+                        {
+                            "name": "Tag by ID",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/tags/{{TagID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "tags",
+                                        "{{TagID}}"
+                                    ],
+                                    "query": []
+                                },
+                                "description": "Get specific Tag by ID"
+                            }
+                        },
+                        {
+                            "name": "Create Tag",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Sample Tag Title\",\n    \"content\": \"Sample Tag content here.\",\n    \"excerpt\": \"Sample Tag excerpt.\",\n    \"status\": \"draft\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/tags",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "tags"
+                                    ]
+                                },
+                                "description": "Create new Tag"
+                            }
+                        },
+                        {
+                            "name": "Update Tag",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Updated Tag Title\",\n    \"content\": \"Updated Tag content here.\",\n    \"excerpt\": \"Updated Tag excerpt.\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/tags/{{TagID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "tags",
+                                        "{{TagID}}"
+                                    ]
+                                },
+                                "description": "Update existing Tag by ID"
+                            }
+                        },
+                        {
+                            "name": "Delete Tag",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/tags/{{TagID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "tags",
+                                        "{{TagID}}"
+                                    ]
+                                },
+                                "description": "Delete Tag by ID"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Taxonomies",
+                    "item": [
+                        {
+                            "name": "List of Taxonomies",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/taxonomies",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "taxonomies"
+                                    ],
+                                    "query": []
+                                },
+                                "description": "Get list of all taxonomies"
+                            }
+                        },
+                        {
+                            "name": "Taxonomy by Slug",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/taxonomies?slug=example",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "taxonomies"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "slug",
+                                            "value": "example"
+                                        }
+                                    ]
+                                },
+                                "description": "Get specific Taxonomy by slug"
+                            }
+                        },
+                        {
+                            "name": "Taxonomy by ID",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/taxonomies/{{TaxonomyID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "taxonomies",
+                                        "{{TaxonomyID}}"
+                                    ],
+                                    "query": []
+                                },
+                                "description": "Get specific Taxonomy by ID"
+                            }
+                        },
+                        {
+                            "name": "Create Taxonomy",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Sample Taxonomy Title\",\n    \"content\": \"Sample Taxonomy content here.\",\n    \"excerpt\": \"Sample Taxonomy excerpt.\",\n    \"status\": \"draft\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/taxonomies",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "taxonomies"
+                                    ]
+                                },
+                                "description": "Create new Taxonomy"
+                            }
+                        },
+                        {
+                            "name": "Update Taxonomy",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Updated Taxonomy Title\",\n    \"content\": \"Updated Taxonomy content here.\",\n    \"excerpt\": \"Updated Taxonomy excerpt.\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/taxonomies/{{TaxonomyID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "taxonomies",
+                                        "{{TaxonomyID}}"
+                                    ]
+                                },
+                                "description": "Update existing Taxonomy by ID"
+                            }
+                        },
+                        {
+                            "name": "Delete Taxonomy",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/taxonomies/{{TaxonomyID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "taxonomies",
+                                        "{{TaxonomyID}}"
+                                    ]
+                                },
+                                "description": "Delete Taxonomy by ID"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Comments",
+                    "item": [
+                        {
+                            "name": "List of Comments",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/comments",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "comments"
+                                    ],
+                                    "query": []
+                                },
+                                "description": "Get list of all comments"
+                            }
+                        },
+                        {
+                            "name": "Comment by Slug",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/comments?slug=example",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "comments"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "slug",
+                                            "value": "example"
+                                        }
+                                    ]
+                                },
+                                "description": "Get specific Comment by slug"
+                            }
+                        },
+                        {
+                            "name": "Comment by ID",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/comments/{{CommentID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "comments",
+                                        "{{CommentID}}"
+                                    ],
+                                    "query": []
+                                },
+                                "description": "Get specific Comment by ID"
+                            }
+                        },
+                        {
+                            "name": "Create Comment",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Sample Comment Title\",\n    \"content\": \"Sample Comment content here.\",\n    \"excerpt\": \"Sample Comment excerpt.\",\n    \"status\": \"draft\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/comments",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "comments"
+                                    ]
+                                },
+                                "description": "Create new Comment"
+                            }
+                        },
+                        {
+                            "name": "Update Comment",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Updated Comment Title\",\n    \"content\": \"Updated Comment content here.\",\n    \"excerpt\": \"Updated Comment excerpt.\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/comments/{{CommentID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "comments",
+                                        "{{CommentID}}"
+                                    ]
+                                },
+                                "description": "Update existing Comment by ID"
+                            }
+                        },
+                        {
+                            "name": "Delete Comment",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/comments/{{CommentID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "comments",
+                                        "{{CommentID}}"
+                                    ]
+                                },
+                                "description": "Delete Comment by ID"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Users",
+                    "item": [
+                        {
+                            "name": "List of Users",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/users",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "users"
+                                    ],
+                                    "query": []
+                                },
+                                "description": "Get list of all users"
+                            }
+                        },
+                        {
+                            "name": "User by Slug",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/users?slug=example",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "users"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "slug",
+                                            "value": "example"
+                                        }
+                                    ]
+                                },
+                                "description": "Get specific User by slug"
+                            }
+                        },
+                        {
+                            "name": "User by ID",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/users/{{UserID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "users",
+                                        "{{UserID}}"
+                                    ],
+                                    "query": []
+                                },
+                                "description": "Get specific User by ID"
+                            }
+                        },
+                        {
+                            "name": "Create User",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Sample User Title\",\n    \"content\": \"Sample User content here.\",\n    \"excerpt\": \"Sample User excerpt.\",\n    \"status\": \"draft\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/users",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "users"
+                                    ]
+                                },
+                                "description": "Create new User"
+                            }
+                        },
+                        {
+                            "name": "Update User",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Updated User Title\",\n    \"content\": \"Updated User content here.\",\n    \"excerpt\": \"Updated User excerpt.\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/users/{{UserID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "users",
+                                        "{{UserID}}"
+                                    ]
+                                },
+                                "description": "Update existing User by ID"
+                            }
+                        },
+                        {
+                            "name": "Delete User",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/users/{{UserID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "users",
+                                        "{{UserID}}"
+                                    ]
+                                },
+                                "description": "Delete User by ID"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Settings",
+                    "item": [
+                        {
+                            "name": "List of Settings",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/settings",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "settings"
+                                    ],
+                                    "query": []
+                                },
+                                "description": "Get list of all settings"
+                            }
+                        },
+                        {
+                            "name": "Setting by Slug",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/settings?slug=example",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "settings"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "slug",
+                                            "value": "example"
+                                        }
+                                    ]
+                                },
+                                "description": "Get specific Setting by slug"
+                            }
+                        },
+                        {
+                            "name": "Setting by ID",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/settings/{{SettingID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "settings",
+                                        "{{SettingID}}"
+                                    ],
+                                    "query": []
+                                },
+                                "description": "Get specific Setting by ID"
+                            }
+                        },
+                        {
+                            "name": "Create Setting",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Sample Setting Title\",\n    \"content\": \"Sample Setting content here.\",\n    \"excerpt\": \"Sample Setting excerpt.\",\n    \"status\": \"draft\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/settings",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "settings"
+                                    ]
+                                },
+                                "description": "Create new Setting"
+                            }
+                        },
+                        {
+                            "name": "Update Setting",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"title\": \"Updated Setting Title\",\n    \"content\": \"Updated Setting content here.\",\n    \"excerpt\": \"Updated Setting excerpt.\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/settings/{{SettingID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "settings",
+                                        "{{SettingID}}"
+                                    ]
+                                },
+                                "description": "Update existing Setting by ID"
+                            }
+                        },
+                        {
+                            "name": "Delete Setting",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/settings/{{SettingID}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "settings",
+                                        "{{SettingID}}"
+                                    ]
+                                },
+                                "description": "Delete Setting by ID"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Options Pages",
+            "item": [
+                {
+                    "name": "List of Options Pages",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/wp-json/custom/v1/options",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "wp-json",
+                                "custom",
+                                "v1",
+                                "options"
+                            ]
+                        },
+                        "description": "Get list of all available options pages"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Forms",
+            "item": [
+                {
+                    "name": "List of Forms",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/wp-json/wp/v2/forms?_fields=id,slug,title",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "wp-json",
+                                "wp",
+                                "v2",
+                                "forms"
+                            ],
+                            "query": [
+                                {
+                                    "key": "_fields",
+                                    "value": "id,slug,title"
+                                }
+                            ]
+                        },
+                        "description": "Get list of all Forms"
+                    }
+                },
+                {
+                    "name": "Contact Form",
+                    "item": [
+                        {
+                            "name": "Submit Form - Contact Form",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"message\": \"This is a test message from the form.\",\n    \"phone\": \"+1234567890\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/wp-json/wp/v2/forms/contact-form/submit",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "wp-json",
+                                        "wp",
+                                        "v2",
+                                        "forms",
+                                        "contact-form",
+                                        "submit"
+                                    ]
+                                },
+                                "description": "Submit form data for 'Contact Form'"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Sample Page",
+            "item": [
+                {
+                    "name": "Sample Page",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/wp-json/wp/v2/pages?slug=sample-page&acf_format=standard&_fields=title,acf,content",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "wp-json",
+                                "wp",
+                                "v2",
+                                "pages"
+                            ],
+                            "query": [
+                                {
+                                    "key": "slug",
+                                    "value": "sample-page"
+                                },
+                                {
+                                    "key": "acf_format",
+                                    "value": "standard"
+                                },
+                                {
+                                    "key": "_fields",
+                                    "value": "title,acf,content"
+                                }
+                            ]
+                        },
+                        "description": "Get Sample Page by slug with ACF fields"
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8000"
+        },
+        {
+            "key": "PostID",
+            "value": "1"
+        },
+        {
+            "key": "PageID",
+            "value": "2"
+        },
+        {
+            "key": "CommentID",
+            "value": "1"
+        },
+        {
+            "key": "UserID",
+            "value": "1"
+        },
+        {
+            "key": "CategoryID",
+            "value": "1"
+        },
+        {
+            "key": "TagID",
+            "value": "1"
+        },
+        {
+            "key": "TaxID",
+            "value": "1"
+        },
+        {
+            "key": "FormID",
+            "value": "1"
+        }
+    ]
+}
