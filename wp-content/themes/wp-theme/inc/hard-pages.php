@@ -41,40 +41,53 @@ function create_hard_pages()
 }
 add_action('init', 'create_hard_pages');
 
-// // Запрет удаления созданных страниц
-// function prevent_hard_page_deletion($post_id)
-// {
-//   if (get_post_meta($post_id, '_hard_page', true) === 'yes') {
-//     wp_die(__('This page is hard and cannot be deleted.'));
-//   }
-// }
-// add_action('before_delete_post', 'prevent_hard_page_deletion');
+// Запрет удаления созданных страниц
+function prevent_hard_page_deletion($post_id)
+{
+  if (get_post_meta($post_id, '_hard_page', true) === 'yes') {
+    wp_die(__('This page is hard and cannot be deleted.'));
+  }
+}
+add_action('before_delete_post', 'prevent_hard_page_deletion');
 
-// // Скрытие кнопки удаления в админке
-// function hide_delete_for_hard_pages($actions, $post)
-// {
-//   if ($post->post_type === 'page' && get_post_meta($post->ID, '_hard_page', true) === 'yes') {
-//     unset($actions['trash']);
-//   }
-//   return $actions;
-// }
-// add_filter('page_row_actions', 'hide_delete_for_hard_pages', 10, 2);
+// Скрытие кнопки удаления в админке
+function hide_delete_for_hard_pages($actions, $post)
+{
+  if ($post->post_type === 'page' && get_post_meta($post->ID, '_hard_page', true) === 'yes') {
+    unset($actions['trash']);
+  }
+  return $actions;
+}
+add_filter('page_row_actions', 'hide_delete_for_hard_pages', 10, 2);
 
-// // Блокировка удаления через REST API
-// function prevent_rest_delete_hard_page($response, $post)
-// {
-//   if ($post->post_type === 'page' && get_post_meta($post->ID, '_hard_page', true) === 'yes') {
-//     return new WP_Error('hard_page', __('This page is hard and cannot be deleted.'), ['status' => 403]);
-//   }
-//   return $response;
-// }
-// add_filter('rest_pre_dispatch', function ($result, $server, $request) {
-//   if ($request->get_method() === 'DELETE' && isset($request['id'])) {
-//     return prevent_rest_delete_hard_page(null, get_post($request['id']));
-//   }
-//   return $result;
-// }, 10, 3);
+// Блокировка удаления через REST API
+function prevent_rest_delete_hard_page($response, $post)
+{
+  if ($post->post_type === 'page' && get_post_meta($post->ID, '_hard_page', true) === 'yes') {
+    return new WP_Error('hard_page', __('This page is hard and cannot be deleted.'), ['status' => 403]);
+  }
+  return $response;
+}
+add_filter('rest_pre_dispatch', function ($result, $server, $request) {
+  if ($request->get_method() === 'DELETE' && isset($request['id'])) {
+    return prevent_rest_delete_hard_page(null, get_post($request['id']));
+  }
+  return $result;
+}, 10, 3);
 
+// Скрытие кнопки удаления на странице редактирования
+function hide_delete_button_on_edit_page() {
+    global $post;
+    if ($post && $post->post_type === 'page' && get_post_meta($post->ID, '_hard_page', true) === 'yes') {
+        echo '<style>
+            #delete-action,
+            .submitdelete {
+                display: none !important;
+            }
+        </style>';
+    }
+}
+add_action('admin_head', 'hide_delete_button_on_edit_page');
 
 // ==========================
 // ACF: Расширение правил отображения по кастомному полю "page_type"

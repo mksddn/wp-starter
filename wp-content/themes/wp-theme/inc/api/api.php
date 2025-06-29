@@ -11,14 +11,14 @@
 /**
  * Отключение отображения всех страниц на фронтенде
  */
-add_action('template_redirect', function () {
-  // Разрешаем доступ только к REST API и wp-admin
-  if (is_admin() || (defined('REST_REQUEST') && REST_REQUEST)) {
-    return;
-  }
-  wp_redirect(home_url());
-  exit;
-});
+// add_action('template_redirect', function () {
+//   // Разрешаем доступ только к REST API и wp-admin
+//   if (is_admin() || (defined('REST_REQUEST') && REST_REQUEST)) {
+//     return;
+//   }
+//   wp_redirect(home_url());
+//   exit;
+// });
 
 
 /**
@@ -40,7 +40,13 @@ add_filter('rest_endpoints', function ($endpoints) {
 /**
  * Кастомный эндпойнт для получения данных страницы по slug
  */
-// require get_template_directory() . '/api/custom-route-page.php';
+require get_template_directory() . '/inc/api/custom-route-page.php';
+
+
+/**
+ * Кастомный эндпойнт для получения данных Options Page по slug
+ */
+require get_template_directory() . '/inc/api/custom-route-options.php';
 
 
 /**

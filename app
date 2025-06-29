@@ -155,7 +155,7 @@ elif [ "$1" == "lint:wpcs" ]; then
 # Команды NPM
 elif [ "$1" == "npm-install" ]; then
     cd wp-content/themes/$THEME_DIRECTORY
-    npm install
+    npm install --force --cache /tmp/npm-cache
     cd ../../..
     exit
 elif [ "$1" == "watch" ]; then

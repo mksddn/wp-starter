@@ -59,15 +59,23 @@ require_once get_template_directory() . '/inc/disable-comments.php';
 
 
 /**
- * Mail обработчик
- */
-require_once get_template_directory() . '/inc/mail.php';
-
-
-/**
  * Создаем страницы программно
  */
 require_once get_template_directory() . '/inc/hard-pages.php';
+
+
+/**
+ * Программно устанавливаем структуру постоянных ссылок (Permalink structure) на Post name
+ */
+add_action('after_switch_theme', function() {
+  global $wp_rewrite;
+  $desired_structure = '/%postname%/';
+  if (get_option('permalink_structure') !== $desired_structure) {
+      update_option('permalink_structure', $desired_structure);
+      $wp_rewrite->set_permalink_structure($desired_structure);
+      flush_rewrite_rules();
+  }
+});
 
 
 /**
@@ -83,6 +91,24 @@ if (class_exists('ACF')) {
     </style>';
   }
   add_action('admin_head', 'stylize_acf_repeater_fields');
+}
+
+
+/**
+ * Этот фильтр автоматически добавляет параметр show_in_rest для новых групп полей.
+ */
+add_filter('acf/register_field_group', 'acf_default_show_in_rest', 10, 1);
+function acf_default_show_in_rest($field_group) {
+    // Если группа полей новая (ещё не сохранена), устанавливаем show_in_rest = 1
+    if (!isset($field_group['ID'])) {
+        $field_group['show_in_rest'] = 1;
+    }
+    return $field_group;
+}
+add_filter('acf/prepare_field_group_for_import', 'acf_default_show_in_rest_import');
+function acf_default_show_in_rest_import($field_group) {
+    $field_group['show_in_rest'] = 1;
+    return $field_group;
 }
 
 
@@ -127,22 +153,7 @@ function delete_intermediate_image_sizes($sizes)
 /**
  * Настройки REST API
  */
-// require_once get_template_directory() . '/inc/api/api.php';
-
-
-/**
- * Добавляем страницу настроек ACF (и в меню тоже)
- */
-// if (function_exists('acf_add_options_page')) {
-//   $args = array(
-//     'page_title' => 'Общие настройки', //Заголовок страницы
-//     'menu_title' => 'Общие настройки', //Заголовок в меню
-//     'menu_slug' => 'site-options', //Адрес страницы
-//     'capability' => 'edit_posts', //Кто может редактировать 
-//   );
-
-//   acf_add_options_page($args);
-// }
+require_once get_template_directory() . '/inc/api/api.php';
 
 
 /**
