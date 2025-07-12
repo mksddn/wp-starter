@@ -1,5 +1,7 @@
 .env
 .srv
+.cursor
+deploy.sh
 # dbdump.sql
 backup-db
 wp-content/*
