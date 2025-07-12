@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<psalm>
+  <!-- Анализируемые директории -->
+  <projectFiles>
+    <directory name="../../wp-content/themes" />
+    <directory name="../../wp-content/mu-plugins" />
+    <ignoreFiles>
+      <directory name="../../vendor" />
+    </ignoreFiles>
+  </projectFiles>
+  <!-- Уровень строгости: error — критичное замечание для всех указанных ошибок -->
+  <issueHandlers>
+    <MissingReturnType errorLevel="error" />
+    <PossiblyNullReference errorLevel="error" />
+    <PossiblyUndefinedVariable errorLevel="error" />
+    <MixedAssignment errorLevel="error" />
+    <MixedReturnStatement errorLevel="error" />
+    <MixedArgument errorLevel="error" />
+    <MixedPropertyTypeCoercion errorLevel="error" />
+  </issueHandlers>
+</psalm>

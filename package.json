@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "html-validate": "^9.7.1"
+  },
+  "scripts": {
+    "lint:htmlvalidate": "node config/lint/validate-html-fragments.js",
+    "lint:htmlvalidate-cli": "html-validate 'wp-content/themes/wp-theme/**/*.php' 'wp-content/mu-plugins/**/*.php'"
+  }
+}

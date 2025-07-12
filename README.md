@@ -20,25 +20,24 @@
 - <a id="dbimport"></a>Импорт базы данных `./app db-import`
 > Для импорта размести в корне репозитория дамп БД (не архив) с расширением .sql
 
-### Команды NPM
-> Убедись, что у тебя установлен [Node.js](https://nodejs.org/en) `node --version` (рекомендую использовать [NVM](https://github.com/nvm-sh/nvm))
-- Установить зависимости `./app npm-install`
+### browsersync (hot-reload)
+- Установить зависимости в директории с темой `./app npm-install`
 - Запустить режим разработки (browsersync + postcss) `./app watch`
 > ВНИМАНИЕ! Команда работает только при запущенном проекте (`./app up`), а hot-reload работает на 3000 порту ([http://localhost:3000](http://localhost:3000/))
 
-### Команды Composer
-> Убедись, что у тебя установлен [Composer](https://getcomposer.org/) `composer --version`
-- Установить зависимости `./app composer-install`
-- Проверить все файлы PHP на наличие синтаксических ошибок `./app lint:php`
-- Проверить все файлы PHP согласно [WP Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/) `./app lint:wpcs`
+### Проверка кода (линтеры)
+- Установить зависимости в корне проекта `composer install && npm install`
+- Проверить HTML `npm run lint:htmlvalidate`
+- Проверить WP Coding Standards `composer lint:phpcs`
+- Проверить PHP на ошибки и предупреждения `composer lint:php`
+- Автофикс ошибок PHP `composer fix`
 
 ## Советы
+- Перед запуском команд NPM, убедись, что у тебя установлен [Node.js](https://nodejs.org/en) `node --version` (рекомендую использовать [NVM](https://github.com/nvm-sh/nvm))
+- Перед запуском линтинга, убедись, что у тебя установлен [Composer](https://getcomposer.org/) `composer --version` и [Node.js](https://nodejs.org/en) `node --version`
 - Панель phpMyAdmin доступна по адресу [http://localhost:8080](http://localhost:8080/)
 - Не размещай важный код в **wp-config.php**, так как этот файл в каждой среде свой. Динамической является только директория **/wp-content/** с темой, плагинами и загрузками.
 - Не забывай передавать дамп БД другому разработчику или актуализировать ее при деплое в staging/production `./app db-export`
-- Тема поддерживает программное создание страниц в файле **/inc/hard-pages-list.php** (чтобы не привязываться к БД).
-- Тема поддерживает acf.json
-![acf-sync](https://github.com/mksddn/wp-starter/assets/22976310/da78f925-ca72-4124-87a9-1e58dee0f398)
 
 ## Модули, расширяющие функционал
 
@@ -57,13 +56,13 @@
 ### File Size Column
 Добавляет в медиа-библиотеку колонку с размером файлов и возможность сортировки по размеру.
 
-### Forms Handler
+### [Forms Handler](./docs/FORMS_HANDLER_API.md)
 Универсальная система обработки форм с REST API, интеграцией Telegram/Google Sheets и сохранением заявок в админ-панели.
 
 ### Plugins Logger
 Автоматически ведет список активных плагинов, сохраняя их text-domain в файл `plugins.txt`.
 
-### Postman Collection Admin
+### [Postman Collection Admin](./docs/POSTMAN_API.md)
 Генератор коллекций Postman для REST API с автоматическим созданием запросов для страниц и кастомных типов записей.
 
 ### SVG Support

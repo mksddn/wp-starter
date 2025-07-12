@@ -1,8 +1,13 @@
 <?php
+/**
+ * Жестко заданные страницы для темы.
+ *
+ * @package wp-theme
+ */
 
-// Создаем страницы программно
+// Создаем страницы программно.
 $GLOBALS['hard_pages'] = [
-    'Home Page' => ['slug' => 'home', 'page_type' => 'home_page'],
-    // 'About Page' => ['slug' => 'about', 'page_type' => 'about_page'],
-    // 'Contact Page' => ['slug' => 'contact', 'page_type' => 'contact_page'],
+    'Home Page' => ['slug' => 'home'],
+    // 'Sample Page' => ['slug' => 'sample-page'],
+    // 'Privacy Policy' => ['slug' => 'privacy-policy'],
 ];

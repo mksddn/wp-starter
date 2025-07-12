@@ -1,0 +1,25 @@
+{
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.7",
+    "wp-coding-standards/wpcs": "^3.0",
+    "vimeo/psalm": "^5.15"
+  },
+  "scripts": {
+    "lint": "phpcs --standard=config/lint/phpcs.xml --extensions=php --ignore=vendor --error-severity=1 --warning-severity=0 wp-content/themes wp-content/mu-plugins && psalm",
+    "fix": "phpcbf --standard=config/lint/phpcs.xml --extensions=php --ignore=vendor wp-content/themes wp-content/mu-plugins",
+    "lint:php": "find wp-content/themes wp-content/mu-plugins -name '*.php' -exec php -l {} \\;",
+    "lint:phpcs": "phpcs --standard=config/lint/phpcs.xml --extensions=php --ignore=vendor wp-content/themes",
+    "lint:phpcs:errors": "phpcs --standard=config/lint/phpcs.xml --extensions=php --ignore=vendor --error-severity=1 --warning-severity=0 wp-content/themes",
+    "lint:phpcs:warnings": "phpcs --standard=config/lint/phpcs.xml --extensions=php --ignore=vendor --error-severity=0 --warning-severity=1 wp-content/themes",
+    "lint:psalm": "psalm --config=config/lint/psalm.xml",
+    "lint:psalm:errors": "psalm --config=config/lint/psalm.xml --show-info=false",
+    "lint:psalm:info": "psalm --config=config/lint/psalm.xml --show-info=true --output-format=console",
+    "lint:psalm:themes": "psalm --config=config/lint/psalm.xml --find-dead-code --paths=wp-content/themes",
+    "lint:psalm:mu-plugins": "psalm --config=config/lint/psalm.xml --find-dead-code --paths=wp-content/mu-plugins"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  }
+}
