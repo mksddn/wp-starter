@@ -15,9 +15,9 @@ services:
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
       WORDPRESS_DB_NAME: ${DB_NAME}
     volumes:
-      - ./.srv/wordpress/:/var/www/html
-      - ./.srv/log/:/var/log
-      - ./wp-content:/var/www/html/wp-content
+      - ../.srv/wordpress/:/var/www/html
+      - ../.srv/log/:/var/log
+      - ../wp-content:/var/www/html/wp-content
       - ./custom.ini:/usr/local/etc/php/conf.d/custom.ini
 
   wpcli:
@@ -36,9 +36,9 @@ services:
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
       WORDPRESS_DB_NAME: ${DB_NAME}
     volumes:
-      - ./.srv/wordpress/:/var/www/html
-      - ./.srv/log/:/var/log
-      - ./wp-content:/var/www/html/wp-content
+      - ../.srv/wordpress/:/var/www/html
+      - ../.srv/log/:/var/log
+      - ../wp-content:/var/www/html/wp-content
       - ./custom.ini:/usr/local/etc/php/conf.d/custom.ini
 
   mysql:
@@ -47,7 +47,7 @@ services:
     ports:
       - ${DB_PORT}:3306
     volumes:
-      - ./.srv/database:/var/lib/mysql
+      - ../.srv/database:/var/lib/mysql
     environment:
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}

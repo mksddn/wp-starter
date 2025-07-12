@@ -28,7 +28,7 @@ THEME_DIRECTORY=$THEME_DIRECTORY
 
 # WP-CLI вызов через функцию
 wpcli() {
-    docker compose run --rm -e HOME=/tmp wpcli "$@"
+    docker compose -f docker/docker-compose.yml run --rm -e HOME=/tmp wpcli "$@"
 }
 
 # Считывание списка плагинов
@@ -51,7 +51,7 @@ install_plugins() {
 
 # Запуск приложения
 if [ "$1" == "up" ]; then
-    docker compose up -d
+    docker compose -f docker/docker-compose.yml up -d
 
     retries=0
     until wpcli core install \
@@ -77,7 +77,7 @@ if [ "$1" == "up" ]; then
 
 # Остановка приложения
 elif [ "$1" == "stop" ]; then
-    docker compose stop
+    docker compose -f docker/docker-compose.yml stop
     exit
 
 # Создание нового юзера (админа)
@@ -91,7 +91,7 @@ elif [ "$1" == "user-create" ]; then
 elif [ "$1" == "db-export" ]; then
     wpcli db export dbdump.sql
     docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/dbdump.sql .
-    docker compose run --rm wordpress rm -rf dbdump.sql
+    docker compose -f docker/docker-compose.yml run --rm wordpress rm -rf dbdump.sql
     exit
 
 # Импорт БД
@@ -100,11 +100,11 @@ elif [ "$1" == "db-import" ]; then
     # wpcli db export --tables=wp_users,wp_usermeta users.sql
     wpcli db export $current_date_time.sql
     docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/$current_date_time.sql ./backup-db/
-    docker compose run --rm wordpress rm -rf $current_date_time.sql
+    docker compose -f docker/docker-compose.yml run --rm wordpress rm -rf $current_date_time.sql
     docker cp *.sql ${REPOSITORY_NAME}_wpcli://var/www/html/
     wpcli db clean --yes
     wpcli db import *.sql
-    docker compose run --rm wordpress rm -rf *.sql
+    docker compose -f docker/docker-compose.yml run --rm wordpress rm -rf *.sql
     wpcli search-replace ${URL_DEV} ${URL_LOCAL}
     wpcli search-replace ${URL_PROD} ${URL_LOCAL}
     # wpcli db import users.sql
@@ -135,23 +135,6 @@ elif [ "$1" == "debug-off" ]; then
     wpcli config set SCRIPT_DEBUG false --raw
     exit
 
-# Команды Composer
-elif [ "$1" == "composer-install" ]; then
-    cd wp-content/themes/$THEME_DIRECTORY
-    composer install
-    cd ../../..
-    exit
-elif [ "$1" == "lint:php" ]; then
-    cd wp-content/themes/$THEME_DIRECTORY
-    composer lint:php
-    cd ../../..
-    exit
-elif [ "$1" == "lint:wpcs" ]; then
-    cd wp-content/themes/$THEME_DIRECTORY
-    composer lint:wpcs
-    cd ../../..
-    exit
-
 # Команды NPM
 elif [ "$1" == "npm-install" ]; then
     cd wp-content/themes/$THEME_DIRECTORY
@@ -166,10 +149,11 @@ elif [ "$1" == "watch" ]; then
 
 # Очистка
 elif [ "$1" == "clean" ]; then
-    docker compose down
+    docker compose -f docker/docker-compose.yml down
     rm -rf .srv wp-content/plugins wp-content/uploads wp-content/upgrade wp-content/ai1wm-backups
     rm -rf wp-content/index.php wp-content/themes/index.php wp-content/themes/twenty*
     rm -rf wp-content/themes/$THEME_DIRECTORY/{composer.lock,vendor,package-lock.json,node_modules}
+    rm -rf {composer.lock,vendor,package-lock.json,node_modules}
     rm -rf dbdump.sql
     exit
 
