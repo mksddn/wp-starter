@@ -2,7 +2,8 @@
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.7",
     "wp-coding-standards/wpcs": "^3.0",
-    "vimeo/psalm": "^5.15"
+    "vimeo/psalm": "^5.15",
+    "rector/rector": "^2.1"
   },
   "scripts": {
     "lint": "phpcs --standard=config/lint/phpcs.xml --extensions=php --ignore=vendor --error-severity=1 --warning-severity=0 wp-content/themes wp-content/mu-plugins && psalm",
@@ -15,7 +16,9 @@
     "lint:psalm:errors": "psalm --config=config/lint/psalm.xml --show-info=false",
     "lint:psalm:info": "psalm --config=config/lint/psalm.xml --show-info=true --output-format=console",
     "lint:psalm:themes": "psalm --config=config/lint/psalm.xml --find-dead-code --paths=wp-content/themes",
-    "lint:psalm:mu-plugins": "psalm --config=config/lint/psalm.xml --find-dead-code --paths=wp-content/mu-plugins"
+    "lint:psalm:mu-plugins": "psalm --config=config/lint/psalm.xml --find-dead-code --paths=wp-content/mu-plugins",
+    "rector": "vendor/bin/rector process --dry-run --config=config/lint/rector.php",
+    "rector:fix": "vendor/bin/rector process --config=config/lint/rector.php"
   },
   "config": {
     "allow-plugins": {

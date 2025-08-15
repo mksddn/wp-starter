@@ -8,7 +8,7 @@
  */
 
 // Hook to log plugin activation
-function log_plugin_activation( $plugin ) {
+function log_plugin_activation( string $plugin ): void {
     // Get full plugin data
     $plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin );
 
@@ -40,7 +40,7 @@ function log_plugin_activation( $plugin ) {
 add_action( 'activated_plugin', 'log_plugin_activation', 10, 1 );
 
 // Hook to log plugin deactivation
-function log_plugin_deactivation( $plugin ) {
+function log_plugin_deactivation( string $plugin ): void {
     // Get full plugin data
     $plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin );
 
@@ -56,7 +56,7 @@ function log_plugin_deactivation( $plugin ) {
         $lines = @file( $log_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 
         // Search for the text domain and remove it from the array if found
-        if (( $key = array_search( $plugin_text_domain, $lines ) ) !== false) {
+        if (( $key = array_search( $plugin_text_domain, $lines, true ) ) !== false) {
             unset( $lines[ $key ] );
 
             // Rewrite the file without the removed text domain

@@ -13,7 +13,7 @@ if (! defined( 'ABSPATH' )) {
 
 // Main function to convert Cyrillic characters to Latin
 function my_cyr_to_lat( $text ) {
-    $cyrillic = array(
+    $cyrillic = [
         'А',
         'Б',
         'В',
@@ -80,9 +80,9 @@ function my_cyr_to_lat( $text ) {
         'э',
         'ю',
         'я',
-    );
+    ];
 
-    $latin = array(
+    $latin = [
         'A',
         'B',
         'V',
@@ -149,7 +149,7 @@ function my_cyr_to_lat( $text ) {
         'e',
         'yu',
         'ya',
-    );
+    ];
 
     return str_replace( $cyrillic, $latin, $text );
 }
@@ -166,7 +166,7 @@ function my_cyr_to_lat_acf_field_names( $field ) {
 
 
 // Hook into WordPress filters and ACF hooks
-function my_cyr_to_lat_hooks() {
+function my_cyr_to_lat_hooks(): void {
     add_filter( 'sanitize_title', 'my_cyr_to_lat', 9 );
     add_filter( 'sanitize_file_name', 'my_cyr_to_lat', 9 );
     add_filter( 'acf/load_field', 'my_cyr_to_lat_acf_field_names', 10, 1 );

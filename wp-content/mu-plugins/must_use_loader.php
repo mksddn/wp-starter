@@ -38,7 +38,7 @@ if (! is_blog_installed()) {
 
 add_action(
     'muplugins_loaded',
-    array( must_use_loader::get_instance(), 'plugin_setup' )
+    [ must_use_loader::get_instance(), 'plugin_setup' ]
 );
 
 /**
@@ -65,9 +65,8 @@ class must_use_loader {
      * Store for the custom count to add this to the global of WP
      *
      * @since  01/09/2014
-     * @var    integer
      */
-    private $mustuse_total = 0;
+    private int $mustuse_total = 0;
 
     /**
      * Sore the plugin list, there we should load.
@@ -75,7 +74,7 @@ class must_use_loader {
      * @since 2017-01-06
      * @var   array
      */
-    private $plugins = array();
+    private $plugins = [];
 
 
     /**
@@ -100,12 +99,11 @@ class must_use_loader {
      * Used for the doing of the plugin
      *
      * @since  0.0.1
-     * @return void
      */
-    public function plugin_setup() {
+    public function plugin_setup(): void {
 
         // Delete transient cache, if active on the must use plugin list in network view
-        add_action( 'load-plugins.php', array( $this, 'delete_subdir_mu_plugin_cache' ) );
+        add_action( 'load-plugins.php', $this->delete_subdir_mu_plugin_cache(...) );
 
         // Load plugins, count and store them.
         $this->subdir_mu_plugins_files();
@@ -113,10 +111,10 @@ class must_use_loader {
         $this->include_subdir_plugins();
 
         // Change the plugin view value
-        add_action( 'admin_footer-plugins.php', array( $this, 'change_view_values' ), 11 );
+        add_action( 'admin_footer-plugins.php', $this->change_view_values(...), 11 );
 
         // Add row and content for all plugins, there include via this plugin.
-        add_action( 'after_plugin_row_must_use_loader.php', array( $this, 'list_subdir_mu_plugins' ) );
+        add_action( 'after_plugin_row_must_use_loader.php', $this->list_subdir_mu_plugins(...) );
     }
 
 
@@ -147,9 +145,8 @@ class must_use_loader {
      * Retrieve the status of the WP Debug.
      *
      * @since  2017-01-04
-     * @return bool
      */
-    private function is_debug_status() {
+    private function is_debug_status(): bool {
 
         return defined( 'WP_DEBUG' ) && WP_DEBUG;
     }
@@ -173,7 +170,7 @@ class must_use_loader {
      * @since   0.0.1
      * @version 2017-01-06
      */
-    public function subdir_mu_plugins_files() {
+    public function subdir_mu_plugins_files(): void {
 
         // No caching, then load
         if ($this->is_debug_status()) {
@@ -202,13 +199,11 @@ class must_use_loader {
 
     /**
      * Get all plugins from MU plugin directory.
-     *
-     * @return array
      */
-    public function get_mu_plugins() {
+    public function get_mu_plugins(): array {
 
         // Invalid cache
-        $plugins = array();
+        $plugins = [];
 
         // Check for the optional defined var of the class
         if (! self::$wpmu_plugin_dir) {
@@ -246,9 +241,8 @@ class must_use_loader {
      * Include all plugins from subdirectories
      *
      * @since   0.0.1
-     * @return  void
      */
-    public function include_subdir_plugins() {
+    public function include_subdir_plugins(): void {
 
         // Include all plugins in subdirectories
         foreach ($this->plugins as $plugin_file) {
@@ -265,9 +259,9 @@ class must_use_loader {
      *
      * @param string $plugin File path.
      */
-    public function set_network_plugin_option( $plugin ) {
+    public function set_network_plugin_option( $plugin ): void {
 
-        $current            = get_site_option( 'active_sitewide_plugins', array() );
+        $current            = get_site_option( 'active_sitewide_plugins', [] );
         $current[ $plugin ] = time();
         update_site_option( 'active_sitewide_plugins', $current );
     }
@@ -277,9 +271,8 @@ class must_use_loader {
      * Delete the transient cache, if on the Must Use plugin list on network view
      *
      * @since   0.0.1
-     * @return  void
      */
-    public function delete_subdir_mu_plugin_cache() {
+    public function delete_subdir_mu_plugin_cache(): void {
 
         // get screen information
         $screen = get_current_screen();
@@ -298,9 +291,8 @@ class must_use_loader {
      * Change total count for must use values
      *
      * @since   01/09/2014
-     * @return  void
      */
-    public function change_view_values() {
+    public function change_view_values(): void {
 
         $current_screen = get_current_screen();
         if (null === $current_screen || 'plugins-network' !== $current_screen->id) {
@@ -343,16 +335,16 @@ class must_use_loader {
      *
      * @return array
      */
-    public function filter_plugin_data( $plugin_file ) {
+    public function filter_plugin_data( string $plugin_file ) {
 
-        $defaults = array(
+        $defaults = [
             'Name'        => '?',
             'Description' => '&nbsp;',
             'Version'     => '',
             'AuthorName'  => '',
             'Author'      => '',
             'PluginURI'   => '',
-        );
+        ];
 
         $data = get_plugin_data( WPMU_PLUGIN_DIR . '/' . $plugin_file );
 
@@ -366,18 +358,14 @@ class must_use_loader {
      * @since  2014-10-15
      *
      * @param  string $data Url for each plugin link.
-     *
-     * @return string
      */
-    public function format_plugin_uri( $data ) {
+    public function format_plugin_uri( $data ): string {
 
         if ('' === $data) {
             return $data;
         }
 
-        $plugin_uri = '| <a href="' . esc_url( $data ) . '">' . esc_html__( 'Visit plugin site' ) . '</a>';
-
-        return $plugin_uri;
+        return '| <a href="' . esc_url( $data ) . '">' . esc_html__( 'Visit plugin site' ) . '</a>';
     }
 
 
@@ -385,26 +373,25 @@ class must_use_loader {
      * Add rows for each sub-plugin under this plugin when listing mu-plugins in wp-admin.
      *
      * @since   0.0.1
-     * @return  void
      */
-    public function list_subdir_mu_plugins() {
+    public function list_subdir_mu_plugins(): void {
 
         foreach ($this->plugins as $plugin_file) {
             $plugin_data = $this->filter_plugin_data( $plugin_file );
 
             // Sanitize fields
-            $allowed_tags = array(
-                'abbr'    => array( 'title' => true ),
-                'acronym' => array( 'title' => true ),
+            $allowed_tags = [
+                'abbr'    => [ 'title' => true ],
+                'acronym' => [ 'title' => true ],
                 'code'    => true,
                 'em'      => true,
                 'strong'  => true,
                 'cite'    => true,
-                'a'       => array(
+                'a'       => [
                     'href'  => true,
                     'title' => true,
-                ),
-            );
+                ],
+            ];
             ?>
 
             <tr id="<?php echo sanitize_title( $plugin_file ); ?>" class="active">

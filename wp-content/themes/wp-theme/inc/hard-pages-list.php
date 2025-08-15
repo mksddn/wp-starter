@@ -6,8 +6,7 @@
  */
 
 // Создаем страницы программно.
-$GLOBALS['hard_pages'] = [
-    'Home Page' => ['slug' => 'home'],
-    // 'Sample Page' => ['slug' => 'sample-page'],
+$GLOBALS['hard_pages'] = [    'Home Page вкиспи' => ['slug' => 'home'],
+// 'Sample Page' => ['slug' => 'sample-page'],
     // 'Privacy Policy' => ['slug' => 'privacy-policy'],
 ];

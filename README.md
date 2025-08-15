@@ -29,8 +29,9 @@
 - Установить зависимости в корне проекта `composer install && npm install`
 - Проверить HTML `npm run lint:htmlvalidate`
 - Проверить WP Coding Standards `composer lint:phpcs`
-- Проверить PHP на ошибки и предупреждения `composer lint:php`
-- Автофикс ошибок PHP `composer fix`
+- Проверить PHP на современные стандарты и потенциальные улучшения `composer rector`
+- Автоматически исправить PHP по правилам Rector `composer rector:fix`
+- Автофикс ошибок PHP (стиль) `composer fix`
 
 ## Советы
 - Перед запуском команд NPM, убедись, что у тебя установлен [Node.js](https://nodejs.org/en) `node --version` (рекомендую использовать [NVM](https://github.com/nvm-sh/nvm))

@@ -8,15 +8,16 @@
 
 /**
  * Функция для получения всех Options Pages через ACF.
+ * @return mixed[]
  */
-function get_all_options_pages() {
-    $options_pages = array();
+function get_all_options_pages(): array {
+    $options_pages = [];
 
     // Через ACF Options Page API.
     if (function_exists( 'acf_options_page' )) {
         try {
             $acf_pages = acf_options_page()->get_pages();
-            if (is_array( $acf_pages ) && ! empty( $acf_pages )) {
+            if (is_array( $acf_pages ) && $acf_pages !== []) {
                 $options_pages = $acf_pages;
             }
         } catch (Exception $e) {
@@ -25,9 +26,9 @@ function get_all_options_pages() {
     }
 
     // Через acf_get_options_pages (альтернативный способ).
-    if (empty( $options_pages ) && function_exists( 'acf_get_options_pages' )) {
+    if ($options_pages === [] && function_exists( 'acf_get_options_pages' )) {
         $acf_pages = acf_get_options_pages();
-        if (is_array( $acf_pages ) && ! empty( $acf_pages )) {
+        if (is_array( $acf_pages ) && $acf_pages !== []) {
             $options_pages = $acf_pages;
         }
     }
@@ -40,20 +41,19 @@ function get_all_options_pages() {
  * Функция для форматирования данных Options Page.
  *
  * @param array $page Данные страницы Options Page.
- * @return array
  */
-function format_options_page_data( $page ) {
+function format_options_page_data( $page ): array {
     if (! is_array( $page )) {
-        return array();
+        return [];
     }
 
-    return array(
-        'menu_slug'  => isset( $page['menu_slug'] ) ? $page['menu_slug'] : '',
-        'page_title' => isset( $page['page_title'] ) ? $page['page_title'] : '',
-        'menu_title' => isset( $page['menu_title'] ) ? $page['menu_title'] : '',
-        'post_id'    => isset( $page['post_id'] ) ? $page['post_id'] : '',
-        'data'       => get_fields( isset( $page['post_id'] ) ? $page['post_id'] : '' ) ? get_fields( isset( $page['post_id'] ) ? $page['post_id'] : '' ) : array(),
-    );
+    return [
+        'menu_slug'  => $page['menu_slug'] ?? '',
+        'page_title' => $page['page_title'] ?? '',
+        'menu_title' => $page['menu_title'] ?? '',
+        'post_id'    => $page['post_id'] ?? '',
+        'data'       => get_fields( $page['post_id'] ?? '' ) ?: [],
+    ];
 }
 
 
@@ -62,13 +62,13 @@ function format_options_page_data( $page ) {
  */
 add_action(
     'rest_api_init',
-    function () {
+    function (): void {
         register_rest_route(
             'custom/v1',
             '/options/(?P<slug>[a-zA-Z0-9_-]+)',
-            array(
+            [
                 'methods'             => 'GET',
-                'callback'            => function ( $data ) {
+                'callback'            => function ( array $data ) {
                     $slug = sanitize_text_field( $data['slug'] );
 
                     // Получаем все Options Pages.
@@ -88,7 +88,7 @@ add_action(
                         return new WP_Error(
                             'options_page_not_found',
                             'Options Page с указанным слагом не найдена',
-                            array( 'status' => 404 )
+                            [ 'status' => 404 ]
                         );
                     }
 
@@ -96,18 +96,16 @@ add_action(
                     $options_data = get_fields( $target_page['post_id'] );
 
                     // Возвращаем данные без success и data.
-                    return $options_data ? $options_data : (object) array();
+                    return $options_data ?: (object) [];
                 },
-                'args'                => array(
-                    'slug' => array(
+                'args'                => [
+                    'slug' => [
                         'required'          => true,
                         'sanitize_callback' => 'sanitize_text_field',
-                    ),
-                ),
-                'permission_callback' => function () {
-                    return true;
-                },
-            )
+                    ],
+                ],
+                'permission_callback' => fn(): true => true,
+            ]
         );
     }
 );
@@ -117,30 +115,25 @@ add_action(
  */
 add_action(
     'rest_api_init',
-    function () {
+    function (): void {
         register_rest_route(
             'custom/v1',
             '/options',
-            array(
+            [
                 'methods'             => 'GET',
-                'callback'            => function () {
+                'callback'            => function (): array {
                     // Получаем все Options Pages.
                     $options_pages = get_all_options_pages();
 
-                    $pages_data = array();
+                    $pages_data = [];
                     foreach ($options_pages as $page) {
                         $pages_data[] = format_options_page_data( $page );
                     }
 
-                    return array(
-                        'success' => true,
-                        'data'    => $pages_data,
-                    );
+                    return $pages_data;
                 },
-                'permission_callback' => function () {
-                    return true;
-                },
-            )
+                'permission_callback' => fn(): true => true,
+            ]
         );
     }
 );

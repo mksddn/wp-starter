@@ -19,7 +19,7 @@ if (! defined( 'ABSPATH' )) {
  */
 
 // Add "Duplicate" button in admin
-function add_duplicate_post_button() {
+function add_duplicate_post_button(): void {
     global $post;
 
     // Check user permissions
@@ -29,10 +29,10 @@ function add_duplicate_post_button() {
 
     // Get all post types that support editing
     $post_types = get_post_types(
-        array(
+        [
             'public'  => true,
             'show_ui' => true,
-        ),
+        ],
         'objects'
     );
 
@@ -48,7 +48,7 @@ function add_duplicate_post_button() {
 add_action( 'admin_init', 'add_duplicate_post_button' );
 
 // Add "Duplicate" link in posts list
-function duplicate_post_link( $actions, $post ) {
+function duplicate_post_link( array $actions, $post ): array {
     if (current_user_can( 'edit_posts' )) {
         $actions['duplicate'] = '<a href="' . wp_nonce_url( admin_url( 'admin.php?action=duplicate_post&post=' . $post->ID ), 'duplicate_post_' . $post->ID ) . '" title="Duplicate this post" rel="permalink">Duplicate</a>';
     }
@@ -58,7 +58,7 @@ function duplicate_post_link( $actions, $post ) {
 
 
 // Handle duplication
-function duplicate_post_action() {
+function duplicate_post_action(): void {
     if (! isset( $_GET['action'] ) || $_GET['action'] !== 'duplicate_post') {
         return;
     }
@@ -93,9 +93,9 @@ function duplicate_post_action() {
         // Redirect to edit new post
         wp_redirect( admin_url( 'post.php?post=' . $duplicate_id . '&action=edit' ) );
         exit;
-    } else {
-        wp_die( 'Error creating duplicate' );
     }
+
+    wp_die( 'Error creating duplicate' );
 }
 
 
@@ -104,7 +104,7 @@ add_action( 'admin_init', 'duplicate_post_action' );
 // Main duplication function
 function duplicate_post( $original_post ) {
     // Prepare data for new post
-    $post_data = array(
+    $post_data = [
         'post_title'            => $original_post->post_title . ' (copy)',
         'post_content'          => $original_post->post_content,
         'post_excerpt'          => $original_post->post_excerpt,
@@ -121,7 +121,7 @@ function duplicate_post( $original_post ) {
         'post_content_filtered' => $original_post->post_content_filtered,
         'post_mime_type'        => $original_post->post_mime_type,
         'guid'                  => '',
-    );
+    ];
 
     // Insert new post
     $duplicate_id = wp_insert_post( $post_data );
@@ -133,7 +133,7 @@ function duplicate_post( $original_post ) {
     // Copy taxonomies
     $taxonomies = get_object_taxonomies( $original_post->post_type );
     foreach ($taxonomies as $taxonomy) {
-        $terms = wp_get_object_terms( $original_post->ID, $taxonomy, array( 'fields' => 'slugs' ) );
+        $terms = wp_get_object_terms( $original_post->ID, $taxonomy, [ 'fields' => 'slugs' ] );
         wp_set_object_terms( $duplicate_id, $terms, $taxonomy, false );
     }
 
@@ -165,18 +165,18 @@ function duplicate_post( $original_post ) {
     }
 
     // Copy attachments (if it's a page or post)
-    if (in_array( $original_post->post_type, array( 'post', 'page' ) )) {
+    if (in_array( $original_post->post_type, [ 'post', 'page' ] )) {
         $attachments = get_posts(
-            array(
+            [
                 'post_type'   => 'attachment',
                 'post_parent' => $original_post->ID,
                 'numberposts' => -1,
                 'post_status' => 'any',
-            )
+            ]
         );
 
         foreach ($attachments as $attachment) {
-            $attachment_data = array(
+            $attachment_data = [
                 'post_title'     => $attachment->post_title,
                 'post_content'   => $attachment->post_content,
                 'post_excerpt'   => $attachment->post_excerpt,
@@ -186,7 +186,7 @@ function duplicate_post( $original_post ) {
                 'menu_order'     => $attachment->menu_order,
                 'post_mime_type' => $attachment->post_mime_type,
                 'guid'           => '',
-            );
+            ];
 
             $new_attachment_id = wp_insert_post( $attachment_data );
 
@@ -210,7 +210,7 @@ function duplicate_post( $original_post ) {
 
 
 // Add "Duplicate" button in post editor
-function add_duplicate_button_to_editor() {
+function add_duplicate_button_to_editor(): void {
     global $post;
 
     if (! $post || ! current_user_can( 'edit_posts' )) {
@@ -231,7 +231,7 @@ add_action( 'admin_footer-post.php', 'add_duplicate_button_to_editor' );
 add_action( 'admin_footer-post-new.php', 'add_duplicate_button_to_editor' );
 
 // Add notification about successful duplication
-function duplicate_post_admin_notice() {
+function duplicate_post_admin_notice(): void {
     if (isset( $_GET['duplicated'] ) && $_GET['duplicated'] == '1') {
         echo '<div class="notice notice-success is-dismissible"><p>Post successfully duplicated!</p></div>';
     }

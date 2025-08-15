@@ -16,7 +16,7 @@
 /**
  * Разрешаем только REST API и wp-admin, остальное редиректим на /wp-admin
  */
-add_action('template_redirect', function () {
+add_action('template_redirect', function (): void {
     // Разрешаем доступ к админке и REST API
     if (is_admin() || (defined('REST_REQUEST') && REST_REQUEST)) {
         return;

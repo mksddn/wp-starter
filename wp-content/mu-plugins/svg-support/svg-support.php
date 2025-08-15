@@ -10,7 +10,7 @@
 add_filter( 'upload_mimes', 'svg_upload_allow' );
 
 
-function svg_upload_allow( $mimes ) {
+function svg_upload_allow( array $mimes ): array {
     $mimes['svg'] = 'image/svg+xml';
     return $mimes;
 }
@@ -20,12 +20,12 @@ function svg_upload_allow( $mimes ) {
 add_filter( 'wp_check_filetype_and_ext', 'fix_svg_mime_type', 10, 5 );
 
 
-function fix_svg_mime_type( $data, $file, $filename, $mimes, $real_mime = '' ) {
+function fix_svg_mime_type( array $data, $file, $filename, $mimes, $real_mime = '' ): array {
     // For WordPress 5.1 and newer
     if (version_compare( $GLOBALS['wp_version'], '5.1.0', '>=' )) {
-        $dosvg = in_array( $real_mime, array( 'image/svg', 'image/svg+xml' ) );
+        $dosvg = in_array( $real_mime, [ 'image/svg', 'image/svg+xml' ] );
     } else {
-        $dosvg = ( '.svg' === strtolower( substr( $filename, -4 ) ) );
+        $dosvg = ( '.svg' === strtolower( substr( (string) $filename, -4 ) ) );
     }
 
     // Fix MIME type and validate user permissions
@@ -49,12 +49,12 @@ function fix_svg_mime_type( $data, $file, $filename, $mimes, $real_mime = '' ) {
 add_filter( 'wp_prepare_attachment_for_js', 'show_svg_in_media_library' );
 
 
-function show_svg_in_media_library( $response ) {
+function show_svg_in_media_library( array $response ): array {
     if ($response['mime'] === 'image/svg+xml') {
         // Add the file URL to the image preview field
-        $response['image'] = array(
+        $response['image'] = [
             'src' => $response['url'],
-        );
+        ];
     }
 
     return $response;

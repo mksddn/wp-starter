@@ -12,7 +12,7 @@ if (class_exists( 'WooCommerce' )) {
     /**
      * Adds WooCommerce support to the theme.
      */
-    function woocommerce_support() {
+    function woocommerce_support(): void {
         add_theme_support( 'woocommerce' );
     }
 

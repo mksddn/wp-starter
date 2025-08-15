@@ -9,7 +9,7 @@
 require_once __DIR__ . '/hard-pages-list.php';
 
 // Глобальная переменная для отслеживания недавно удаленных страниц.
-$GLOBALS['recently_deleted_hard_pages'] = array();
+$GLOBALS['recently_deleted_hard_pages'] = [];
 
 // Назначаем page_type для всех страниц.
 foreach ($GLOBALS['hard_pages'] as $key => $hard_page) {
@@ -20,8 +20,8 @@ foreach ($GLOBALS['hard_pages'] as $key => $hard_page) {
 /**
  * Добавляет страницу в hard-pages-list.php.
  */
-function add_page_to_hard_pages( $page_id, $page_title, $page_slug ) {
-    static $added_pages = array();
+function add_page_to_hard_pages( $page_id, string $page_title, string $page_slug ): void {
+    static $added_pages = [];
 
     // Проверяем, не была ли эта страница уже добавлена в текущем запросе.
     $page_key = $page_title . '|' . $page_slug;
@@ -35,7 +35,7 @@ function add_page_to_hard_pages( $page_id, $page_title, $page_slug ) {
     }
 
     // Пропускаем страницы с суффиксами __trashed.
-    if (false !== strpos( $page_slug, '__trashed' )) {
+    if (str_contains( $page_slug, '__trashed' )) {
         return;
     }
 
@@ -59,13 +59,13 @@ function add_page_to_hard_pages( $page_id, $page_title, $page_slug ) {
     }
 
     // Проверяем, есть ли уже такая страница в списке.
-    if (false !== strpos( $content, "'slug' => '$page_slug'" )) {
+    if (str_contains( $content, sprintf("'slug' => '%s'", $page_slug) )) {
         return;
     }
 
     // Экранируем специальные символы в названии страницы для поиска.
     $escaped_title = str_replace( "'", "\\'", $page_title );
-    if (false !== strpos( $content, "'$escaped_title'" )) {
+    if (str_contains( $content, sprintf("'%s'", $escaped_title) )) {
         return;
     }
 
@@ -76,13 +76,13 @@ function add_page_to_hard_pages( $page_id, $page_title, $page_slug ) {
         $array_content = $matches[1];
 
         // Формируем новую запись.
-        $new_entry = "    '$escaped_title' => ['slug' => '$page_slug'],\n";
+        $new_entry = "    '{$escaped_title}' => ['slug' => '{$page_slug}'],\n";
 
         // Добавляем новую запись в конец массива.
         $new_array_content = rtrim( $array_content ) . "\n" . $new_entry;
 
         // Заменяем содержимое массива.
-        $new_content = preg_replace( $pattern, "\$GLOBALS['hard_pages'] = [\n$new_array_content];", $content );
+        $new_content = preg_replace( $pattern, "\$GLOBALS['hard_pages'] = [\n{$new_array_content}];", $content );
 
         // Записываем обновленный файл.
         if (file_put_contents( $file_path, $new_content )) {
@@ -90,10 +90,10 @@ function add_page_to_hard_pages( $page_id, $page_title, $page_slug ) {
             $added_pages[] = $page_key;
 
             // Обновляем глобальную переменную.
-            $GLOBALS['hard_pages'][ $page_title ] = array(
+            $GLOBALS['hard_pages'][ $page_title ] = [
                 'slug'      => $page_slug,
                 'page_type' => $page_slug,
-            );
+            ];
 
             // Принудительно обновляем глобальную переменную из файла.
             $updated_content = file_get_contents( $file_path );
@@ -102,17 +102,17 @@ function add_page_to_hard_pages( $page_id, $page_title, $page_slug ) {
                 $pattern = '/\$GLOBALS\[\'hard_pages\'\]\s*=\s*\[(.*?)\];/s';
                 if (preg_match( $pattern, $updated_content, $matches )) {
                     // Безопасно парсим массив.
-                    $hard_pages = array();
+                    $hard_pages = [];
                     $lines      = explode( "\n", $matches[1] );
                     foreach ($lines as $line) {
                         $line = trim( $line );
                         if (preg_match( "/'([^']+)'\\s*=>\\s*\\['slug'\\s*=>\\s*'([^']+)'\\]/", $line, $matches )) {
                             $title                = $matches[1];
                             $slug                 = $matches[2];
-                            $hard_pages[ $title ] = array(
+                            $hard_pages[ $title ] = [
                                 'slug'      => $slug,
                                 'page_type' => $slug,
-                            );
+                            ];
                         }
                     }
 
@@ -137,8 +137,8 @@ function add_page_to_hard_pages( $page_id, $page_title, $page_slug ) {
  * @param string $page_title Название страницы.
  * @param string $page_slug Слаг страницы.
  */
-function remove_page_from_hard_pages( $page_title, $page_slug ) {
-    static $removed_pages = array();
+function remove_page_from_hard_pages( string $page_title, $page_slug ): void {
+    static $removed_pages = [];
 
     // Проверяем, не была ли эта страница уже удалена в текущем запросе.
     $page_key = $page_title . '|' . $page_slug;
@@ -160,7 +160,7 @@ function remove_page_from_hard_pages( $page_title, $page_slug ) {
     $escaped_title = str_replace( "'", "\\'", $page_title );
 
     // Проверяем, есть ли страница в файле перед попыткой удаления.
-    if (false === strpos( $content, "'$escaped_title'" )) {
+    if (!str_contains( $content, sprintf("'%s'", $escaped_title) )) {
         return;
     }
 
@@ -172,9 +172,9 @@ function remove_page_from_hard_pages( $page_title, $page_slug ) {
         $new_content = preg_replace( $search_pattern, '', $content );
 
         // Чистим двойные запятые и лишние пробелы.
-        $new_content = preg_replace( '/,\s*,/', ',', $new_content );
-        $new_content = preg_replace( '/\[\s*,/', '[', $new_content );
-        $new_content = preg_replace( '/,\s*\]/', ']', $new_content );
+        $new_content = preg_replace( '/,\s*,/', ',', (string) $new_content );
+        $new_content = preg_replace( '/\[\s*,/', '[', (string) $new_content );
+        $new_content = preg_replace( '/,\s*\]/', ']', (string) $new_content );
 
         // Записываем обновленный файл.
         if (file_put_contents( $file_path, $new_content )) {
@@ -196,17 +196,17 @@ function remove_page_from_hard_pages( $page_title, $page_slug ) {
                 $pattern = '/\$GLOBALS\[\'hard_pages\'\]\s*=\s*\[(.*?)\];/s';
                 if (preg_match( $pattern, $updated_content, $matches )) {
                     // Безопасно парсим массив.
-                    $hard_pages = array();
+                    $hard_pages = [];
                     $lines      = explode( "\n", $matches[1] );
                     foreach ($lines as $line) {
                         $line = trim( $line );
                         if (preg_match( "/'([^']+)'\\s*=>\\s*\\['slug'\\s*=>\\s*'([^']+)'\\]/", $line, $matches )) {
                             $title                = $matches[1];
                             $slug                 = $matches[2];
-                            $hard_pages[ $title ] = array(
+                            $hard_pages[ $title ] = [
                                 'slug'      => $slug,
                                 'page_type' => $slug,
-                            );
+                            ];
                         }
                     }
 
@@ -230,7 +230,7 @@ function remove_page_from_hard_pages( $page_title, $page_slug ) {
  * @param string $new_title Новый заголовок
  * @param string $new_slug Новый слаг
  */
-function update_page_in_hard_pages( $post_id, $old_title, $old_slug, $new_title, $new_slug ) {
+function update_page_in_hard_pages( $post_id, $old_title, $old_slug, $new_title, $new_slug ): void {
     // Проверяем, что это hard-page
     if (get_post_meta( $post_id, '_hard_page', true ) !== 'yes') {
         return;
@@ -251,7 +251,7 @@ function update_page_in_hard_pages( $post_id, $old_title, $old_slug, $new_title,
         $escaped_new_title = str_replace( "'", "\\'", $new_title );
 
         // Формируем новую запись
-        $new_entry = "    '$escaped_new_title' => ['slug' => '$new_slug'],\n";
+        $new_entry = "    '{$escaped_new_title}' => ['slug' => '{$new_slug}'],\n";
 
         // Заменяем старую запись на новую
         $new_content = preg_replace( $old_pattern, $new_entry, $content );
@@ -262,10 +262,10 @@ function update_page_in_hard_pages( $post_id, $old_title, $old_slug, $new_title,
             if (isset( $GLOBALS['hard_pages'][ $old_title ] )) {
                 $page_data = $GLOBALS['hard_pages'][ $old_title ];
                 unset( $GLOBALS['hard_pages'][ $old_title ] );
-                $GLOBALS['hard_pages'][ $new_title ] = array(
+                $GLOBALS['hard_pages'][ $new_title ] = [
                     'slug'      => $new_slug,
                     'page_type' => $new_slug,
-                );
+                ];
             }
 
             // Обновляем мета-данные
@@ -282,7 +282,7 @@ function update_page_in_hard_pages( $post_id, $old_title, $old_slug, $new_title,
  * @param WP_Post $post Объект страницы
  * @param bool    $update true, если обновление
  */
-function on_page_created( $post_id, $post, $update ) {
+function on_page_created( $post_id, $post, $update ): void {
     if ($update) {
         return;
     }
@@ -312,19 +312,16 @@ add_action( 'wp_insert_post', 'on_page_created', 5, 3 );
  * @param string  $old_status Старый статус
  * @param WP_Post $post Объект страницы
  */
-function on_page_status_changed( $new_status, $old_status, $post ) {
+function on_page_status_changed( $new_status, $old_status, $post ): void {
     if ('publish' === $new_status && 'publish' !== $old_status && 'page' === $post->post_type) {
         add_page_to_hard_pages( $post->ID, $post->post_title, $post->post_name );
     }
 
     // Добавляем отслеживание перемещения в корзину
-    if ('trash' === $new_status && 'trash' !== $old_status && 'page' === $post->post_type) {
-        if ('yes' === get_post_meta( $post->ID, '_hard_page', true )) {
-            remove_page_from_hard_pages( $post->post_title, $post->post_name );
-
-            // Автоматически окончательно удаляем страницу из корзины через 5 секунд
-            wp_schedule_single_event( time() + 5, 'force_delete_hard_page', array( $post->ID ) );
-        }
+    if ('trash' === $new_status && 'trash' !== $old_status && 'page' === $post->post_type && 'yes' === get_post_meta( $post->ID, '_hard_page', true )) {
+        remove_page_from_hard_pages( $post->post_title, $post->post_name );
+        // Автоматически окончательно удаляем страницу из корзины через 5 секунд
+        wp_schedule_single_event( time() + 5, 'force_delete_hard_page', [ $post->ID ] );
     }
 }
 
@@ -337,7 +334,7 @@ add_action( 'transition_post_status', 'on_page_status_changed', 5, 3 );
  *
  * @param int $post_id ID страницы
  */
-function on_page_deleted( $post_id ) {
+function on_page_deleted( $post_id ): void {
     $post = get_post( $post_id );
 
     if (! $post) {
@@ -369,7 +366,7 @@ add_action( 'rest_delete_post', 'on_page_deleted' );
  *
  * @param int $post_id ID страницы
  */
-function on_page_trashed( $post_id ) {
+function on_page_trashed( $post_id ): void {
     $post = get_post( $post_id );
 
     if (! $post) {
@@ -383,12 +380,12 @@ function on_page_trashed( $post_id ) {
     // Проверяем, была ли это hard-page
     if ('yes' === get_post_meta( $post_id, '_hard_page', true )) {
         // Очищаем slug от суффиксов __trashed для поиска в файле
-        $original_slug = preg_replace( '/__trashed-\d+$/', '', $post->post_name );
+        $original_slug = preg_replace( '/__trashed-\d+$/', '', (string) $post->post_name );
 
         remove_page_from_hard_pages( $post->post_title, $original_slug );
 
         // Автоматически окончательно удаляем страницу из корзины через 5 секунд
-        wp_schedule_single_event( time() + 5, 'force_delete_hard_page', array( $post_id ) );
+        wp_schedule_single_event( time() + 5, 'force_delete_hard_page', [ $post_id ] );
     }
 }
 
@@ -401,7 +398,7 @@ add_action( 'wp_trash_post', 'on_page_trashed' );
  *
  * @param int $post_id ID страницы
  */
-function force_delete_hard_page( $post_id ) {
+function force_delete_hard_page( $post_id ): void {
     $post = get_post( $post_id );
 
     if (! $post) {
@@ -429,7 +426,7 @@ add_action( 'force_delete_hard_page', 'force_delete_hard_page' );
  * @param WP_Post $post_after После изменений
  * @param WP_Post $post_before До изменений
  */
-function on_page_updated( $post_id, $post_after, $post_before ) {
+function on_page_updated( $post_id, $post_after, $post_before ): void {
     if ('page' !== $post_after->post_type) {
         return;
     }
@@ -454,7 +451,7 @@ add_action( 'post_updated', 'on_page_updated', 10, 3 );
 /**
  * Программное создание жёстко заданных страниц
  */
-function create_hard_pages() {
+function create_hard_pages(): void {
     // Принудительно обновляем глобальную переменную из файла перед созданием страниц
     $file_path = __DIR__ . '/hard-pages-list.php';
     if (file_exists( $file_path )) {
@@ -464,17 +461,17 @@ function create_hard_pages() {
             $pattern = '/\$GLOBALS\[\'hard_pages\'\]\s*=\s*\[(.*?)\];/s';
             if (preg_match( $pattern, $content, $matches )) {
                 // Безопасно парсим массив
-                $hard_pages = array();
+                $hard_pages = [];
                 $lines      = explode( "\n", $matches[1] );
                 foreach ($lines as $line) {
                     $line = trim( $line );
                     if (preg_match( "/'([^']+)'\\s*=>\\s*\\['slug'\\s*=>\\s*'([^']+)'\\]/", $line, $matches )) {
                         $title                = $matches[1];
                         $slug                 = $matches[2];
-                        $hard_pages[ $title ] = array(
+                        $hard_pages[ $title ] = [
                             'slug'      => $slug,
                             'page_type' => $slug,
-                        );
+                        ];
                     }
                 }
 
@@ -503,13 +500,13 @@ function create_hard_pages() {
         if (! $existing_page) {
             // Создаем новую страницу
             $page_id = wp_insert_post(
-                array(
+                [
                     'post_title'  => $title,
                     'post_name'   => $slug,
                     'post_status' => 'publish',
                     'post_type'   => 'page',
                     'post_author' => 1,
-                )
+                ]
             );
 
             // Добавляем мета-данные
@@ -537,7 +534,7 @@ if (function_exists( 'acf_add_local_field_group' )) {
     // 1. Добавляем новое условие
     add_filter(
         'acf/location/rule_types',
-        function ( $choices ) {
+        function ( array $choices ) {
             $choices['Hard Pages']['hard_page'] = 'Hard Page Type';
             return $choices;
         }
@@ -546,7 +543,7 @@ if (function_exists( 'acf_add_local_field_group' )) {
     // 2. Автоматическое заполнение значений из $hard_pages
     add_filter(
         'acf/location/rule_values/hard_page',
-        function ( $choices ) {
+        function ( array $choices ): array {
             if (isset( $GLOBALS['hard_pages'] ) && is_array( $GLOBALS['hard_pages'] )) {
                 foreach ($GLOBALS['hard_pages'] as $page) {
                     if (! empty( $page['page_type'] )) {
@@ -563,7 +560,7 @@ if (function_exists( 'acf_add_local_field_group' )) {
     // 3. Логика сравнения
     add_filter(
         'acf/location/rule_match/hard_page',
-        function ( $match, $rule, $options ) {
+        function ( $match, array $rule, array $options ) {
             $post_id = $options['post_id'];
 
             if (! $post_id || 'page' !== get_post_type( $post_id )) {
@@ -589,7 +586,7 @@ if (function_exists( 'acf_add_local_field_group' )) {
 /**
  * Нормализует массив hard_pages в файле
  */
-function normalize_hard_pages_file() {
+function normalize_hard_pages_file(): void {
     $file_path = __DIR__ . '/hard-pages-list.php';
     $content   = file_get_contents( $file_path );
     if (false === $content) {
@@ -602,7 +599,7 @@ function normalize_hard_pages_file() {
         $array_content = $matches[1];
         // Удаляем пустые строки и пробелы
         $lines   = array_filter( array_map( 'trim', explode( "\n", $array_content ) ) );
-        $entries = array();
+        $entries = [];
         foreach ($lines as $line) {
             if (preg_match( "/'[^']+'\s*=>\s*\['slug'\s*=>\s*'[^']+'\],?\s*$/", $line )) {
                 $entries[] = rtrim( $line, ',' );
@@ -621,7 +618,7 @@ function normalize_hard_pages_file() {
             }
         }
 
-        $new_content = preg_replace( $pattern, "\$GLOBALS['hard_pages'] = [\n$new_array_content];", $content );
+        $new_content = preg_replace( $pattern, "\$GLOBALS['hard_pages'] = [\n{$new_array_content}];", $content );
         file_put_contents( $file_path, $new_content );
     }
 }
@@ -633,28 +630,24 @@ function normalize_hard_pages_file() {
  * @param string $key Ключ в массиве $_GET
  * @return int[] Массив целых post_id
  */
-function get_sanitized_post_ids_from_get( $key = 'ids' ) {
+function get_sanitized_post_ids_from_get( $key = 'ids' ): array {
     if (!isset($_GET[$key])) {
-        return array();
+        return [];
     }
 
     $raw_ids = wp_unslash($_GET[$key]); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
     $ids = array_map('sanitize_text_field', explode(',', $raw_ids));
     $ids = array_map('intval', $ids);
-    return array_filter($ids, function($id) {
-        return $id > 0;
-    });
+    return array_filter($ids, fn($id): bool => $id > 0);
 }
 
 
 // phpcs:ignore WordPress.Security.NonceVerification.Missing
-function on_admin_all_actions_early() {
+function on_admin_all_actions_early(): void {
     // Минимальная проверка nonce, если он есть в запросе
-    if (isset($_GET['_wpnonce'])) {
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-        if (!wp_verify_nonce(wp_unslash($_GET['_wpnonce']))) {
-            return;
-        }
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    if (isset($_GET['_wpnonce']) && !wp_verify_nonce(wp_unslash($_GET['_wpnonce']))) {
+        return;
     }
 
     // Проверяем GET параметры для действий с постами
@@ -663,17 +656,13 @@ function on_admin_all_actions_early() {
         foreach ($post_ids as $post_id) {
             // Получаем информацию о посте
             $post = get_post( $post_id );
-            if ($post && 'page' === $post->post_type) {
-                // Проверяем, была ли это hard-page
-                if ('yes' === get_post_meta( $post_id, '_hard_page', true )) {
-                    // Очищаем slug от суффиксов __trashed для поиска в файле
-                    $original_slug = preg_replace( '/__trashed-\d+$/', '', $post->post_name );
-
-                    remove_page_from_hard_pages( $post->post_title, $original_slug );
-
-                    // Автоматически окончательно удаляем страницу из корзины через 5 секунд
-                    wp_schedule_single_event( time() + 5, 'force_delete_hard_page', array( $post_id ) );
-                }
+            // Проверяем, была ли это hard-page
+            if ($post && 'page' === $post->post_type && 'yes' === get_post_meta( $post_id, '_hard_page', true )) {
+                // Очищаем slug от суффиксов __trashed для поиска в файле
+                $original_slug = preg_replace( '/__trashed-\d+$/', '', (string) $post->post_name );
+                remove_page_from_hard_pages( $post->post_title, $original_slug );
+                // Автоматически окончательно удаляем страницу из корзины через 5 секунд
+                wp_schedule_single_event( time() + 5, 'force_delete_hard_page', [ $post_id ] );
             }
         }
     }
@@ -684,11 +673,11 @@ function on_admin_all_actions_early() {
         foreach ($post_ids as $post_id) {
             // Получаем информацию о посте из базы данных (если еще доступна)
             global $wpdb;
-            $post = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->posts} WHERE ID = %d", $post_id ) );
+            $post = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %s WHERE ID = ' . $wpdb->posts, $post_id ) );
 
             if ($post && 'page' === $post->post_type) {
                 // Проверяем, была ли это hard-page
-                $is_hard_page = $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = '_hard_page'", $post_id ) );
+                $is_hard_page = $wpdb->get_var( $wpdb->prepare( sprintf("SELECT meta_value FROM %s WHERE post_id = %%d AND meta_key = '_hard_page'", $wpdb->postmeta), $post_id ) );
 
                 if ('yes' === $is_hard_page) {
                     remove_page_from_hard_pages( $post->post_title, $post->post_name );

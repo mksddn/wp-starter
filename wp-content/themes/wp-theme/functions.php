@@ -9,7 +9,7 @@
 /**
  * Настройки темы.
  */
-function theme_setup() {
+function theme_setup(): void {
     // add_theme_support('post-formats').
     // add_theme_support('automatic-feed-links').
     add_theme_support( 'post-thumbnails' );
@@ -23,7 +23,7 @@ function theme_setup() {
     // 'script',
     // )).
     add_theme_support( 'title-tag' );
-    add_theme_support( 'custom-logo', array( 'unlink-homepage-logo' => true ) );
+    add_theme_support( 'custom-logo', [ 'unlink-homepage-logo' => true ] );
 }
 
 
@@ -44,9 +44,8 @@ add_filter( 'wp_headers', 'disable_x_pingback' );
  * Удаляет X-Pingback из заголовков.
  *
  * @param array $headers Заголовки.
- * @return array
  */
-function disable_x_pingback( $headers ) {
+function disable_x_pingback( array $headers ): array {
     unset( $headers['X-Pingback'] );
     return $headers;
 }
@@ -77,7 +76,7 @@ require_once get_template_directory() . '/inc/hard-pages.php';
  */
 add_action(
     'after_switch_theme',
-    function () {
+    function (): void {
         global $wp_rewrite;
         $desired_structure = '/%postname%/';
         if (get_option( 'permalink_structure' ) !== $desired_structure) {
@@ -97,7 +96,7 @@ if (class_exists( 'ACF' )) {
     /**
      * Стилизация строк ACF repeater.
      */
-    function stylize_acf_repeater_fields() {
+    function stylize_acf_repeater_fields(): void {
         echo '<style>
         .acf-repeater tbody .acf-row:nth-child(even)>.acf-row-handle {
            filter: brightness(0.9);
@@ -138,9 +137,8 @@ add_filter( 'acf/prepare_field_group_for_import', 'acf_default_show_in_rest_impo
  * Добавляет show_in_rest при импорте группы полей ACF.
  *
  * @param array $field_group Группа полей.
- * @return array
  */
-function acf_default_show_in_rest_import( $field_group ) {
+function acf_default_show_in_rest_import( array $field_group ): array {
     $field_group['show_in_rest'] = 1;
     return $field_group;
 }
@@ -156,20 +154,19 @@ add_filter( 'intermediate_image_sizes', 'delete_intermediate_image_sizes' );
  * Удаляет указанные размеры миниатюр.
  *
  * @param array $sizes Размеры.
- * @return array
  */
-function delete_intermediate_image_sizes( $sizes ) {
+function delete_intermediate_image_sizes( $sizes ): array {
     // размеры которые нужно удалить.
     return array_diff(
         $sizes,
-        array(
+        [
             'thumbnail',
             'medium',
             'medium_large',
             'large',
             '1536x1536',
             '2048x2048',
-        )
+        ]
     );
 }
 
