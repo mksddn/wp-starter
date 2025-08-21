@@ -73,3 +73,39 @@ require get_template_directory() . '/inc/api/custom-route-options.php';
 // }
 // return $result;
 // });
+
+
+/**
+ * Этот фильтр автоматически добавляет параметр show_in_rest для новых групп полей.
+ */
+add_filter( 'acf/register_field_group', 'acf_default_show_in_rest', 10, 1 );
+
+
+/**
+ * Добавляет show_in_rest для новых групп полей ACF.
+ *
+ * @param array $field_group Группа полей.
+ * @return array
+ */
+function acf_default_show_in_rest( $field_group ) {
+    // Если группа полей новая (ещё не сохранена), устанавливаем show_in_rest = 1.
+    if (! isset( $field_group['ID'] )) {
+        $field_group['show_in_rest'] = 1;
+    }
+
+    return $field_group;
+}
+
+
+add_filter( 'acf/prepare_field_group_for_import', 'acf_default_show_in_rest_import' );
+
+
+/**
+ * Добавляет show_in_rest при импорте группы полей ACF.
+ *
+ * @param array $field_group Группа полей.
+ */
+function acf_default_show_in_rest_import( array $field_group ): array {
+    $field_group['show_in_rest'] = 1;
+    return $field_group;
+}

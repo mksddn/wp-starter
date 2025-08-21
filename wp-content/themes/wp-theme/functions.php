@@ -52,26 +52,6 @@ function disable_x_pingback( array $headers ): array {
 
 
 /**
- * Подключаем стили и скрипты.
- */
-require_once get_template_directory() . '/inc/styles-n-scripts.php';
-
-/**
- * Настройки поиска.
- */
-require_once get_template_directory() . '/inc/search-settings.php';
-
-/**
- * Отключаем комментарии.
- */
-require_once get_template_directory() . '/inc/disable-comments.php';
-
-/**
- * Создаем страницы программно.
- */
-require_once get_template_directory() . '/inc/hard-pages.php';
-
-/**
  * Программно устанавливаем структуру постоянных ссылок (Permalink structure) на Post name.
  */
 add_action(
@@ -98,10 +78,10 @@ if (class_exists( 'ACF' )) {
      */
     function stylize_acf_repeater_fields(): void {
         echo '<style>
-        .acf-repeater tbody .acf-row:nth-child(even)>.acf-row-handle {
-           filter: brightness(0.9);
-        }
-    </style>';
+		.acf-repeater tbody .acf-row:nth-child(even)>.acf-row-handle {
+		   filter: brightness(0.9);
+		}
+	</style>';
     }
 
 
@@ -109,66 +89,14 @@ if (class_exists( 'ACF' )) {
 }
 
 /**
- * Этот фильтр автоматически добавляет параметр show_in_rest для новых групп полей.
+ * Search settings.
  */
-add_filter( 'acf/register_field_group', 'acf_default_show_in_rest', 10, 1 );
-
+require_once get_template_directory() . '/inc/search-settings.php';
 
 /**
- * Добавляет show_in_rest для новых групп полей ACF.
- *
- * @param array $field_group Группа полей.
- * @return array
+ * Theme Settings page and helpers.
  */
-function acf_default_show_in_rest( $field_group ) {
-    // Если группа полей новая (ещё не сохранена), устанавливаем show_in_rest = 1.
-    if (! isset( $field_group['ID'] )) {
-        $field_group['show_in_rest'] = 1;
-    }
-
-    return $field_group;
-}
-
-
-add_filter( 'acf/prepare_field_group_for_import', 'acf_default_show_in_rest_import' );
-
-
-/**
- * Добавляет show_in_rest при импорте группы полей ACF.
- *
- * @param array $field_group Группа полей.
- */
-function acf_default_show_in_rest_import( array $field_group ): array {
-    $field_group['show_in_rest'] = 1;
-    return $field_group;
-}
-
-
-/**
- * Отключаем создание миниатюр изображений для указанных размеров.
- */
-add_filter( 'intermediate_image_sizes', 'delete_intermediate_image_sizes' );
-
-
-/**
- * Удаляет указанные размеры миниатюр.
- *
- * @param array $sizes Размеры.
- */
-function delete_intermediate_image_sizes( $sizes ): array {
-    // размеры которые нужно удалить.
-    return array_diff(
-        $sizes,
-        [
-            'thumbnail',
-            'medium',
-            'medium_large',
-            'large',
-            '1536x1536',
-            '2048x2048',
-        ]
-    );
-}
+require_once get_template_directory() . '/inc/theme-settings.php';
 
 
 /**
@@ -188,11 +116,6 @@ function delete_intermediate_image_sizes( $sizes ): array {
 // 'main_menu' => esc_html__('Основное меню'),
 // 'footer_menu' => esc_html__('Дополнительное меню'),
 // ));
-
-/**
- * Настройки REST API.
- */
-require_once get_template_directory() . '/inc/api/api.php';
 
 /**
  * Добавляем свои классы в body (иногда нужно, тк верстальщики прописывают стили к кастомным классам).

@@ -24,9 +24,9 @@ function display_filesize_column( $column_name, $post_id ): void {
         $file_path = get_attached_file( $post_id );
         if (file_exists( $file_path )) {
             $file_size = filesize( $file_path );
-            echo size_format( $file_size );
+            echo esc_html( size_format( $file_size ) );
         } else {
-            echo __( 'N/A', 'textdomain' );
+            echo esc_html__( 'N/A', 'textdomain' );
         }
     }
 }

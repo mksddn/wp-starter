@@ -62,7 +62,7 @@ if (! function_exists( 'add_thumb_column' )) {
                     echo wp_get_attachment_image( $attachment->ID, [ $width, $height ], true );
                 } else {
                     // Display "None" if no image is found
-                    echo __( 'None', 'textdomain' );
+                    echo esc_html__( 'None', 'textdomain' );
                 }
             }
         }
