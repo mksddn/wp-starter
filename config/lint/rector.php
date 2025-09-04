@@ -26,7 +26,8 @@ return static function (RectorConfig $rectorConfig): void {
         SetList::CODE_QUALITY,
         SetList::DEAD_CODE,
         SetList::TYPE_DECLARATION,
-        SetList::CODING_STYLE,
+        // Исключаем CODING_STYLE, так как он конфликтует с WordPress Coding Standards
+        // SetList::CODING_STYLE,
     ]);
 
     // Настройки для WordPress
@@ -45,5 +46,27 @@ return static function (RectorConfig $rectorConfig): void {
         'wp_localize_script',
         'wp_register_script',
         'wp_register_style',
+        // Исключаем функции экранирования WordPress
+        'esc_html',
+        'esc_attr',
+        'esc_url',
+        'esc_textarea',
+        'esc_js',
+        'wp_kses',
+        'wp_kses_post',
+        'wp_kses_data',
+        'sanitize_text_field',
+        'sanitize_email',
+        'sanitize_url',
+        'sanitize_textarea_field',
+        'wp_unslash',
+        'wp_verify_nonce',
+        'wp_create_nonce',
+        'admin_url',
+        'get_admin_url',
+        'home_url',
+        'site_url',
+        'get_home_url',
+        'get_site_url',
     ]);
 }; 

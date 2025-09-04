@@ -98,6 +98,10 @@ require_once get_template_directory() . '/inc/search-settings.php';
  */
 require_once get_template_directory() . '/inc/theme-settings.php';
 
+/**
+ * ACF Local JSON settings.
+ */
+require_once get_template_directory() . '/inc/acf-json-settings.php';
 
 /**
  * Регистрируем новые размеры изображений.

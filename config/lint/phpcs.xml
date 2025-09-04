@@ -17,4 +17,17 @@
     <!-- Отключаем inline comments -->
     <exclude name="WordPress.Commenting.InlineComment"/>
     <exclude name="Squiz.Commenting.InlineComment"/>
+    
+    <!-- Отключаем правила, которые могут конфликтовать с современным PHP -->
+    <exclude name="WordPress.PHP.DisallowShortTernary"/>
+    <exclude name="WordPress.PHP.YodaConditions"/>
+    <exclude name="WordPress.PHP.DisallowShortTernary"/>
+    
+    <!-- Разрешаем современные PHP конструкции -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="200"/>
+            <property name="absoluteLineLimit" value="250"/>
+        </properties>
+    </rule>
 </ruleset>
