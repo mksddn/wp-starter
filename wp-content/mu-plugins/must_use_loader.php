@@ -28,7 +28,7 @@
 if (! function_exists( 'add_filter' )) {
     header( 'Status: 403 Forbidden' );
     header( 'HTTP/1.1 403 Forbidden' );
-    echo "Hi there! I'm just a part of plugin, not much I can do when called directly.";
+    echo esc_html( "Hi there! I'm just a part of plugin, not much I can do when called directly." );
     exit();
 }
 
@@ -314,7 +314,7 @@ class must_use_loader {
                 value = parseInt(value.replace(')', ''));
 
                 // replace and add strings
-                mustuse = value + <?php echo $this->mustuse_total; ?>;
+                mustuse = value + <?php echo esc_js( $this->mustuse_total ); ?>;
                 $(selector).replaceWith('(' + mustuse + ')');
                 mustuse = mustuse + ' <?php echo esc_attr( $item ); ?>';
                 if (document.URL.search(/plugin_status=mustuse/) !== -1) {
@@ -394,7 +394,7 @@ class must_use_loader {
             ];
             ?>
 
-            <tr id="<?php echo sanitize_title( $plugin_file ); ?>" class="active">
+            <tr id="<?php echo esc_attr( sanitize_title( $plugin_file ) ); ?>" class="active">
                 <th scope="row" class="check-column"></th>
                 <td class="plugin-title">
                     <strong title="<?php echo esc_attr( $plugin_file ); ?>">

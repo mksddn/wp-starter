@@ -1,5 +1,4 @@
 <?php
-
 /**
  * ACF Local JSON settings for save/load paths.
  * Ensures directories exist and sets preferred locations.
@@ -16,7 +15,7 @@ if (! defined('ABSPATH')) {
  * Ensure a directory exists (create recursively if missing).
  * Returns the path if exists/created, otherwise returns null.
  */
-function aa_acf_ensure_directory($path) {
+function wp_theme_acf_ensure_directory($path) {
     if (!is_dir($path) && !wp_mkdir_p($path)) {
         return null;
     }
@@ -29,7 +28,7 @@ function aa_acf_ensure_directory($path) {
  * Determine preferred save path for ACF Local JSON.
  * Priority: child theme → parent theme → wp-content/acf-json
  */
-function aa_acf_get_preferred_save_path() {
+function wp_theme_acf_get_preferred_save_path(): string {
     $paths = [];
 
     $child_theme_path = trailingslashit(get_stylesheet_directory()) . 'acf-json';
@@ -44,7 +43,7 @@ function aa_acf_get_preferred_save_path() {
     $paths[] = $content_fallback;
 
     foreach ($paths as $path) {
-        $ensured = aa_acf_ensure_directory($path);
+        $ensured = wp_theme_acf_ensure_directory($path);
         if ($ensured && is_writable($ensured)) {
             return $ensured;
         }
@@ -58,7 +57,7 @@ function aa_acf_get_preferred_save_path() {
  * Filter ACF save path for Local JSON and auto-create directories if needed.
  */
 add_filter('acf/settings/save_json', function ($path) {
-    $preferred = aa_acf_get_preferred_save_path();
+    $preferred = wp_theme_acf_get_preferred_save_path();
     return $preferred ?: $path;
 });
 

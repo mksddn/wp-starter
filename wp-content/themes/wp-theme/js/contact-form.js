@@ -1,27 +1,29 @@
 document.addEventListener('DOMContentLoaded', function () {
 
   const form = document.querySelector('.contact-form');
-  form.addEventListener('submit', function (e) {
-    e.preventDefault(); // Предотвращаем обычное отправление формы
-    const formData = new FormData(form);
-    // Если валидация пройдена, отправляем форму через AJAX
-    if (validateForm(form)) {
-      fetch(contactFormData.ajaxUrl, {
-        method: 'POST',
-        body: formData
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            form.reset();
-          }
-          alert(data.data.message);
+  if(form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault(); // Предотвращаем обычное отправление формы
+      const formData = new FormData(form);
+      // Если валидация пройдена, отправляем форму через AJAX
+      if (validateForm(form)) {
+        fetch(contactFormData.ajaxUrl, {
+          method: 'POST',
+          body: formData
         })
-        .catch(error => {
-          console.error('Error submitting data:', error);
-        });
-    }
-  });
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              form.reset();
+            }
+            alert(data.data.message);
+          })
+          .catch(error => {
+            console.error('Error submitting data:', error);
+          });
+      }
+    });
+  }
 
 
   // Пример валидации

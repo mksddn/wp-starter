@@ -1,13 +1,13 @@
 <?php
 /**
- * Основные функции темы и хуки.
+ * Main theme functions and hooks.
  *
  * @package wp-theme
  */
 
 
 /**
- * Настройки темы.
+ * Theme settings.
  */
 function theme_setup(): void {
     // add_theme_support('post-formats').
@@ -29,30 +29,9 @@ function theme_setup(): void {
 
 add_action( 'after_setup_theme', 'theme_setup' );
 
-/**
- * Отключить XML-RPC.
- */
-add_filter( 'xmlrpc_enabled', '__return_false' );
 
 /**
- * Отключить X-Pingback в хэдере.
- */
-add_filter( 'wp_headers', 'disable_x_pingback' );
-
-
-/**
- * Удаляет X-Pingback из заголовков.
- *
- * @param array $headers Заголовки.
- */
-function disable_x_pingback( array $headers ): array {
-    unset( $headers['X-Pingback'] );
-    return $headers;
-}
-
-
-/**
- * Программно устанавливаем структуру постоянных ссылок (Permalink structure) на Post name.
+ * Programmatically set permalink structure to Post name.
  */
 add_action(
     'after_switch_theme',
@@ -64,17 +43,25 @@ add_action(
             $wp_rewrite->set_permalink_structure( $desired_structure );
             flush_rewrite_rules();
         }
+
+        // Update ACF show_in_rest settings if Headless CMS is enabled
+        if (function_exists('wp_theme_get_settings')) {
+            $settings = wp_theme_get_settings();
+            if (isset($settings['headless']) && $settings['headless'] && function_exists('wp_theme_update_all_acf_show_in_rest')) {
+                wp_theme_update_all_acf_show_in_rest(true);
+            }
+        }
     }
 );
 
 /**
- * Визуально разделяем поля повторителя в ACF.
+ * Visually separate ACF repeater fields.
  */
 if (class_exists( 'ACF' )) {
 
 
     /**
-     * Стилизация строк ACF repeater.
+     * Styling ACF repeater rows.
      */
     function stylize_acf_repeater_fields(): void {
         echo '<style>
@@ -88,79 +75,48 @@ if (class_exists( 'ACF' )) {
     add_action( 'admin_head', 'stylize_acf_repeater_fields' );
 }
 
-/**
- * Search settings.
- */
-require_once get_template_directory() . '/inc/search-settings.php';
+
 
 /**
  * Theme Settings page and helpers.
  */
-require_once get_template_directory() . '/inc/theme-settings.php';
+require_once get_template_directory() . '/inc/theme-features.php';
+
 
 /**
- * ACF Local JSON settings.
+ * GitHub Theme Updater.
  */
-require_once get_template_directory() . '/inc/acf-json-settings.php';
+require_once get_template_directory() . '/inc/github-updater.php';
+
 
 /**
- * Регистрируем новые размеры изображений.
+ * Child theme compatibility: ignore parent front-page.php when a child theme is active.
+ */
+add_filter('frontpage_template', function ($template) {
+    if (get_template() !== get_stylesheet()) {
+        return '';
+    }
+
+    return $template;
+}, 100);
+
+/**
+ * Register new image sizes.
  */
 // if (function_exists('add_image_size')) {
-// 300 в ширину и без ограничения в высоту.
+// 300 width and unlimited height.
 // add_image_size('category-thumb', 300, 9999);
-// Кадрирование изображения.
+// Image cropping.
 // add_image_size('homepage-thumb', 220, 180, true);
 // }
 
 /**
- * Регистрируем меню.
+ * Register menus.
  */
 // register_nav_menus(array(
-// 'main_menu' => esc_html__('Основное меню'),
-// 'footer_menu' => esc_html__('Дополнительное меню'),
+// 'main_menu' => esc_html__('Main Menu'),
+// 'footer_menu' => esc_html__('Footer Menu'),
 // ));
 
-/**
- * Добавляем свои классы в body (иногда нужно, тк верстальщики прописывают стили к кастомным классам).
- */
-// function my_plugin_body_class($classes)
-// {
-// $classes[] = 'body-header-fixed';
-// return $classes;
-// }
-// add_filter('body_class', 'my_plugin_body_class');
 
-/**
- * Добавляем описание (отрывок) к странице.
- */
-// function add_excerpt_page()
-// {
-// add_post_type_support('page', 'excerpt');
-// }
-// add_action('init', 'add_excerpt_page');
 
-/**
- * Удаляет "Рубрика: ", "Метка: " и т.д. из заголовка архива.
- */
-// add_filter('get_the_archive_title', function ($title) {
-// return preg_replace('~^[^:]+: ~', '', $title);
-// });
-
-/**
- * Удаляет H2 из шаблона пагинации.
- */
-// add_filter('navigation_markup_template', 'my_navigation_template', 10, 2);
-// function my_navigation_template($template, $class)
-// {
-// return '
-// <nav class="navigation %1$s" role="navigation">
-// <div class="nav-links">%3$s</div>
-// </nav>
-// ';
-// }
-
-/**
- * Настройки WooCommerce.
- */
-// require_once get_template_directory() . '/inc/woocommerce-settings.php';

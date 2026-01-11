@@ -1,19 +1,19 @@
 <?php
 /**
- * Кастомные REST API endpoints для Options Pages через ACF.
+ * Custom REST API endpoints for Options Pages via ACF.
  *
  * @package wp-theme
  */
 
 
 /**
- * Функция для получения всех Options Pages через ACF.
+ * Function to get all Options Pages via ACF.
  * @return mixed[]
  */
 function get_all_options_pages(): array {
     $options_pages = [];
 
-    // Через ACF Options Page API.
+    // Via ACF Options Page API.
     if (function_exists( 'acf_options_page' )) {
         try {
             $acf_pages = acf_options_page()->get_pages();
@@ -25,7 +25,7 @@ function get_all_options_pages(): array {
         }
     }
 
-    // Через acf_get_options_pages (альтернативный способ).
+    // Via acf_get_options_pages (alternative method).
     if ($options_pages === [] && function_exists( 'acf_get_options_pages' )) {
         $acf_pages = acf_get_options_pages();
         if (is_array( $acf_pages ) && $acf_pages !== []) {
@@ -38,13 +38,20 @@ function get_all_options_pages(): array {
 
 
 /**
- * Функция для форматирования данных Options Page.
+ * Function to format Options Page data.
  *
- * @param array $page Данные страницы Options Page.
+ * @param array $page Options Page data.
  */
 function format_options_page_data( $page ): array {
     if (! is_array( $page )) {
         return [];
+    }
+
+    $acf_data = get_fields( $page['post_id'] ?? '' ) ?: [];
+
+    // Filter out empty ACF fields (false values)
+    if (function_exists('wp_theme_filter_empty_acf_fields')) {
+        $acf_data = wp_theme_filter_empty_acf_fields($acf_data);
     }
 
     return [
@@ -52,13 +59,13 @@ function format_options_page_data( $page ): array {
         'page_title' => $page['page_title'] ?? '',
         'menu_title' => $page['menu_title'] ?? '',
         'post_id'    => $page['post_id'] ?? '',
-        'data'       => get_fields( $page['post_id'] ?? '' ) ?: [],
+        'data'       => $acf_data,
     ];
 }
 
 
 /**
- * Кастомный эндпойнт для получения данных Options Page по слагу.
+ * Custom endpoint to get Options Page data by slug.
  */
 add_action(
     'rest_api_init',
@@ -71,10 +78,10 @@ add_action(
                 'callback'            => function ( array $data ) {
                     $slug = sanitize_text_field( $data['slug'] );
 
-                    // Получаем все Options Pages.
+                    // Get all Options Pages.
                     $options_pages = get_all_options_pages();
 
-                    // Ищем Options Page по слагу.
+                    // Find Options Page by slug.
                     $target_page = null;
                     foreach ($options_pages as $page) {
                         if ($page['menu_slug'] === $slug) {
@@ -83,19 +90,24 @@ add_action(
                         }
                     }
 
-                    // Если страница не найдена.
+                    // If page not found.
                     if (! $target_page) {
                         return new WP_Error(
                             'options_page_not_found',
-                            'Options Page с указанным слагом не найдена',
+                            'Options Page with specified slug not found',
                             [ 'status' => 404 ]
                         );
                     }
 
-                    // Получаем данные ACF для этой Options Page.
+                    // Get ACF data for this Options Page.
                     $options_data = get_fields( $target_page['post_id'] );
 
-                    // Возвращаем данные без success и data.
+                    // Filter out empty ACF fields (false values)
+                    if (function_exists('wp_theme_filter_empty_acf_fields')) {
+                        $options_data = wp_theme_filter_empty_acf_fields($options_data ?: []);
+                    }
+
+                    // Return data without success and data wrapper.
                     return $options_data ?: (object) [];
                 },
                 'args'                => [
@@ -111,7 +123,7 @@ add_action(
 );
 
 /**
- * Эндпойнт для получения всех Options Pages.
+ * Endpoint to get all Options Pages.
  */
 add_action(
     'rest_api_init',
@@ -122,7 +134,7 @@ add_action(
             [
                 'methods'             => 'GET',
                 'callback'            => function (): array {
-                    // Получаем все Options Pages.
+                    // Get all Options Pages.
                     $options_pages = get_all_options_pages();
 
                     $pages_data = [];

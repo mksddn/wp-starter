@@ -7,9 +7,8 @@ use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
 
 return static function (RectorConfig $rectorConfig): void {
-    // Проверяем mu-plugins и wp-theme
+    // Проверяем все темы в директории themes
     $rectorConfig->paths([
-        __DIR__ . '/../../wp-content/mu-plugins/',
         __DIR__ . '/../../wp-content/themes/',
     ]);
 
@@ -17,6 +16,8 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->skip([
         __DIR__ . '/../../vendor/',
         __DIR__ . '/../../node_modules/',
+        '*/vendor/*',
+        '*/node_modules/*',
     ]);
 
     // Включаем базовые наборы правил

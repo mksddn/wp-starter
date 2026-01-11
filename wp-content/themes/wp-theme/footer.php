@@ -7,7 +7,7 @@
 
 ?>
 <footer id="colophon" class="site-footer">
-    <!-- Подвал размещаем здесь -->
+    <!-- Site footer placed here -->
 </footer>
 <?php wp_footer(); ?>
 </body>

@@ -54,7 +54,7 @@ function make_filesize_column_sortable( array $sortable_columns ): array {
 add_filter( 'manage_upload_sortable_columns', 'make_filesize_column_sortable' );
 
 
-function sort_filesize_column( $vars ) {
+function sort_filesize_column( array $vars ) {
     if (isset( $vars['orderby'] ) && $vars['orderby'] === 'filesize') {
         return array_merge(
             $vars,
@@ -72,7 +72,7 @@ function sort_filesize_column( $vars ) {
 add_filter( 'request', 'sort_filesize_column' );
 
 // Save file size metadata
-function save_filesize_metadata( $meta_id, $post_id, $meta_key, $meta_value ): void {
+function save_filesize_metadata( $meta_id, $post_id, $meta_key, $_meta_value ): void {
     if ($meta_key === '_wp_attached_file') {
         $file_path = get_attached_file( $post_id );
         if (file_exists( $file_path )) {

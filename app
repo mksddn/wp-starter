@@ -1,6 +1,34 @@
 #!/bin/bash
 
-# Проверка наличия .env файла
+URL_LOCAL=$URL_LOCAL
+THEME_DIRECTORY=$THEME_DIRECTORY 
+
+export REPOSITORY_NAME=$(basename $(git rev-parse --show-toplevel 2>/dev/null || echo $(pwd)))
+
+# Cross-platform browser open function
+open_browser() {
+    local url=$1
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS
+        open "$url"
+    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        # Linux
+        if command -v xdg-open &> /dev/null; then
+            xdg-open "$url"
+        elif command -v gnome-open &> /dev/null; then
+            gnome-open "$url"
+        else
+            echo "Please open $url in your browser"
+        fi
+    elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+        # Windows (Git Bash / Cygwin)
+        start "$url"
+    else
+        echo "Please open $url in your browser"
+    fi
+}
+
+# Check if .env file exists
 if [ ! -f .env ]; then
     if [ -f .env.example ]; then
         cp .env.example .env
@@ -11,7 +39,7 @@ if [ ! -f .env ]; then
     fi
 fi
 
-# Импорт переменных из .env
+# Import variables from .env
 if [ -f .env ]; then
     export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
 else
@@ -19,37 +47,32 @@ else
     exit 1
 fi
 
-export REPOSITORY_NAME=$(basename $(git rev-parse --show-toplevel 2>/dev/null || echo $(pwd)))
-
-URL_LOCAL=$URL_LOCAL
-URL_DEV=$URL_DEV
-URL_PROD=$URL_PROD
-THEME_DIRECTORY=$THEME_DIRECTORY 
-
-# WP-CLI вызов через функцию
+# WP-CLI call via function
 wpcli() {
     docker compose -f docker/docker-compose.yml run --rm -e HOME=/tmp wpcli "$@"
 }
 
-# Считывание списка плагинов
+# Read plugins list
 read_plugins() {
     local plugins=()
+    local content=$(cat wp-content/themes/$THEME_DIRECTORY/plugins.txt | tr -d '\r')
+    [[ "$content" != *$'\n' ]] && content="$content"$'\n'
     while IFS= read -r line; do
-        plugins+=("$line")
-    done <wp-content/themes/$THEME_DIRECTORY/plugins.txt
+        [[ -n "$line" ]] && plugins+=("$line")
+    done <<< "$content"
     echo "${plugins[@]}"
 }
 
-# Установка плагинов
+# Install plugins
 install_plugins() {
     local plugins=($(read_plugins))
     for plugin in "${plugins[@]}"; do
         wpcli plugin install "$plugin"
     done
-    wpcli plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=$ACF_KEY" --activate
+    # wpcli plugin install "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=$ACF_KEY" --activate
 }
 
-# Запуск приложения
+# Start application
 if [ "$1" == "up" ]; then
     docker compose -f docker/docker-compose.yml up -d
 
@@ -72,29 +95,29 @@ if [ "$1" == "up" ]; then
     install_plugins
     wpcli plugin activate --all
     wpcli config set WP_DEBUG true --raw
-    open $URL_LOCAL/wp-admin
+    open_browser "$URL_LOCAL/wp-admin"
     exit
 
-# Остановка приложения
+# Stop application
 elif [ "$1" == "stop" ]; then
     docker compose -f docker/docker-compose.yml stop
     exit
 
-# Создание нового юзера (админа)
+# Create new user (administrator)
 elif [ "$1" == "user-create" ]; then
     wpcli user create --prompt --role=administrator \
         --user_registered= --display_name= --user_nicename= --user_url= --nickname= \
         --first_name= --last_name= --description= --rich_editing= --send-email= --porcelain=n
     exit
 
-# Экспорт БД
+# Export database
 elif [ "$1" == "db-export" ]; then
     wpcli db export dbdump.sql
     docker cp ${REPOSITORY_NAME}_wpcli://var/www/html/dbdump.sql .
     docker compose -f docker/docker-compose.yml run --rm wordpress rm -rf dbdump.sql
     exit
 
-# Импорт БД
+# Import database
 elif [ "$1" == "db-import" ]; then
     current_date_time=$(date +%Y%m%d%H%M)
     # wpcli db export --tables=wp_users,wp_usermeta users.sql
@@ -105,22 +128,20 @@ elif [ "$1" == "db-import" ]; then
     wpcli db clean --yes
     wpcli db import *.sql
     docker compose -f docker/docker-compose.yml run --rm wordpress rm -rf *.sql
-    wpcli search-replace ${URL_DEV} ${URL_LOCAL}
-    wpcli search-replace ${URL_PROD} ${URL_LOCAL}
     # wpcli db import users.sql
     wpcli user create "$ADMIN_USER" "$ADMIN_EMAIL" --user_pass="$ADMIN_PASSWORD" --role=administrator
     exit
 
-# Режим дебага
+# Debug mode
 elif [ "$1" == "debug-on" ]; then
     if [ "$ENVIRONMENT" == "production" ]; then
-        # Режим продакшена: только логирование ошибок
+        # Production mode: error logging only
         wpcli config set WP_DEBUG true --raw
         wpcli config set WP_DEBUG_LOG true --raw
         wpcli config set WP_DEBUG_DISPLAY false --raw
         wpcli config set SCRIPT_DEBUG false --raw
     else
-        # Режим разработки: показывать все ошибки и включить отладку скриптов
+        # Development mode: show all errors and enable script debugging
         wpcli config set WP_DEBUG true --raw
         wpcli config set WP_DEBUG_LOG true --raw
         wpcli config set WP_DEBUG_DISPLAY true --raw
@@ -128,26 +149,14 @@ elif [ "$1" == "debug-on" ]; then
     fi
     exit
 elif [ "$1" == "debug-off" ]; then
-    # Отключить всю отладку независимо от окружения
+    # Disable all debugging regardless of environment
     wpcli config set WP_DEBUG false --raw
     wpcli config set WP_DEBUG_LOG false --raw
     wpcli config set WP_DEBUG_DISPLAY false --raw
     wpcli config set SCRIPT_DEBUG false --raw
     exit
 
-# Команды NPM
-elif [ "$1" == "npm-install" ]; then
-    cd wp-content/themes/$THEME_DIRECTORY
-    npm install --force --cache /tmp/npm-cache
-    cd ../../..
-    exit
-elif [ "$1" == "watch" ]; then
-    cd wp-content/themes/$THEME_DIRECTORY
-    npm run watch
-    cd ../../..
-    exit
-
-# Очистка
+# Cleanup
 elif [ "$1" == "clean" ]; then
     docker compose -f docker/docker-compose.yml down
     rm -rf .srv wp-content/plugins wp-content/uploads wp-content/upgrade wp-content/ai1wm-backups

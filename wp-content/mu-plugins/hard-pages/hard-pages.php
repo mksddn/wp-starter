@@ -310,7 +310,7 @@ add_action('wp_loaded', 'hard_pages_bootstrap_pages', 999);
 
 // ACF integration (unchanged behavior, values come from runtime $GLOBALS['hard_pages'])
 if (function_exists('acf_add_local_field_group')) {
-    add_filter('acf/location/rule_types', function (array $choices) {
+    add_filter('acf/location/rule_types', function (array $choices): array {
         $choices['Hard Pages']['hard_page'] = 'Hard Page Type';
         return $choices;
     });

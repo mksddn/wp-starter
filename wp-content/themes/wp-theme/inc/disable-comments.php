@@ -1,6 +1,6 @@
 <?php
 /**
- * Отключение комментариев для темы.
+ * Disable comments for theme.
  *
  * @package wp-theme
  */

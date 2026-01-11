@@ -19,5 +19,5 @@
 <body <?php body_class(); ?>>
     <?php wp_body_open(); ?>
     <header id="masthead" class="header">
-        <!-- Шапка сайта обычно размещается здесь -->
+        <!-- Site header usually placed here -->
     </header>

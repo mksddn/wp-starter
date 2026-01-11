@@ -24,7 +24,7 @@ function log_plugin_activation( string $plugin ): void {
         $lines = @file( $log_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 
         // If the text domain already exists in the file, do not add it again
-        if (in_array( $plugin_text_domain, $lines )) {
+        if (is_array($lines) && in_array( $plugin_text_domain, $lines )) {
             return;
         }
     } else {
@@ -56,7 +56,7 @@ function log_plugin_deactivation( string $plugin ): void {
         $lines = @file( $log_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 
         // Search for the text domain and remove it from the array if found
-        if (( $key = array_search( $plugin_text_domain, $lines, true ) ) !== false) {
+        if (is_array($lines) && ( $key = array_search( $plugin_text_domain, $lines, true ) ) !== false) {
             unset( $lines[ $key ] );
 
             // Rewrite the file without the removed text domain
