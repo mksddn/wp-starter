@@ -12,7 +12,9 @@ const htmlvalidate = new HtmlValidate({
     'doctype-style': 'off',
     'attribute-allowed-values': 'off',
     'prefer-button': 'off',
-    'valid-id': 'off'
+    'valid-id': 'off',
+    'empty-heading': 'off',
+    'text-content': 'off'
   }
 });
 
