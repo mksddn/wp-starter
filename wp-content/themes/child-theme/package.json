@@ -1,0 +1,13 @@
+{
+  "name": "child-theme-hot-reload",
+  "version": "1.0.0",
+  "description": "Hot reload dependencies for WordPress theme development",
+  "private": true,
+  "scripts": {
+    "hot-reload": "node hot-reload-server.js"
+  },
+  "devDependencies": {
+    "chokidar": "^3.5.3",
+    "ws": "^8.16.0"
+  }
+}
