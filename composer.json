@@ -14,6 +14,9 @@
     "fix": "phpcbf --standard=config/lint/phpcs.xml --extensions=php --ignore=vendor wp-content/themes && vendor/bin/rector process --config=config/lint/rector.php"
   },
   "config": {
+    "platform": {
+      "php": "8.4"
+    },
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true
     }

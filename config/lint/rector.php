@@ -21,9 +21,9 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // Включаем базовые наборы правил
-    $rectorConfig->phpVersion(80200); // PHP 8.2
+    $rectorConfig->phpVersion(80400); // PHP 8.4 (синхронизировано с GitLab CI)
     $rectorConfig->sets([
-        LevelSetList::UP_TO_PHP_82,
+        LevelSetList::UP_TO_PHP_84,
         SetList::CODE_QUALITY,
         SetList::DEAD_CODE,
         SetList::TYPE_DECLARATION,
@@ -69,5 +69,10 @@ return static function (RectorConfig $rectorConfig): void {
         'site_url',
         'get_home_url',
         'get_site_url',
+    ]);
+
+    // Отключаем правило преобразования @deprecated в атрибут, так как Psalm его не поддерживает
+    $rectorConfig->skip([
+        \Rector\Php84\Rector\Class_\DeprecatedAnnotationToDeprecatedAttributeRector::class,
     ]);
 }; 

@@ -63,8 +63,8 @@ final class GitHub_Theme_Updater {
 
         // Extract GitHub info from style.css
         $github_uri = $this->get_github_theme_uri();
-        if ($github_uri) {
-            $parts = explode('/', (string) $github_uri);
+        if (is_string($github_uri) && $github_uri) {
+            $parts = explode('/', $github_uri);
             $this->owner = $parts[0] ?? '';
             $this->repo = $parts[1] ?? '';
         }
