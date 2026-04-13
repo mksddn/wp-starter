@@ -119,6 +119,19 @@ install_plugins() {
     done
 }
 
+# On first DB init only: activate allowlisted plugins (plugins.txt). Plugins already
+# present under wp-content/plugins but not listed here stay inactive — same as wp.org
+# installs skipped by install_plugins when the folder already exists.
+activate_listed_plugins() {
+    local plugins=($(read_plugins))
+    for plugin in "${plugins[@]}"; do
+        if echo "$PLUGINS_REMOVED" | grep -qw "$plugin" 2>/dev/null; then
+            continue
+        fi
+        wpcli plugin activate "$plugin" 2>/dev/null || true
+    done
+}
+
 # Replace stored dev URLs in DB. Skips when home already equals SITE_URL.
 # Optional arg: current home URL (avoids extra wp option get when caller has it)
 replace_urls_in_db() {
@@ -146,7 +159,10 @@ if [ "$1" == "up" ]; then
     $DOCKER_COMPOSE up -d
 
     echo "Checking WordPress..."
+    # First-ever core install: turn on plugins.txt only; later runs never mass-activate.
+    FRESH_WP_INSTALL=0
     if ! wpcli core is-installed 2>/dev/null; then
+        FRESH_WP_INSTALL=1
         retries=0
         until wpcli core install \
             --url=$SITE_URL --title="$SITE_URL" \
@@ -180,7 +196,9 @@ if [ "$1" == "up" ]; then
         wpcli theme activate $THEME_DIRECTORY
     fi
     install_plugins
-    wpcli plugin activate --all
+    if [ "$FRESH_WP_INSTALL" -eq 1 ]; then
+        activate_listed_plugins
+    fi
     installed_plugins=$(get_installed_plugin_slugs)
     for p in hello hello-dolly akismet; do
         if echo "$installed_plugins" | grep -Fxq "$p" 2>/dev/null; then
