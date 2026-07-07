@@ -6,7 +6,7 @@ Create a new WordPress function following these rules:
 
 1. **Function naming**: Use unique prefix (e.g., `wp_theme_`, `child_theme_`) based on theme/plugin context
 2. **Code style**: Follow WordPress Coding Standards (https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/)
-3. **Procedural code only**: No classes, namespaces, or OOP patterns
+3. **Project architecture**: Procedural-first (functions + hooks) unless user explicitly requests otherwise
 4. **Security**: Always sanitize inputs and escape outputs
 5. **Documentation**: Add PHPDoc comments with @package tag
 
@@ -36,4 +36,4 @@ function prefix_function_name( $param_name ) {
 - Place in appropriate file (functions.php or inc/*.php)
 - Add proper type hints if applicable
 - Use WordPress functions instead of PHP native when available
-- Never use anonymous functions for hooks - always named functions
+- Prefer named functions for hooks, especially when removal may be needed

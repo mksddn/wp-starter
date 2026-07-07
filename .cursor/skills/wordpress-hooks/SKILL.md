@@ -92,7 +92,7 @@ function callback_function( $arg1, $arg2 ) {
 
 ## Best Practices
 
-1. **Always use named functions** - Never anonymous functions for hooks
+1. **Prefer named functions** - Especially for hooks that may need `remove_action()`/`remove_filter()`
 2. **Use unique prefixes** - Avoid conflicts with other code
 3. **Document hooks** - Add PHPDoc comments
 4. **Check hook documentation** - Know what arguments are passed
@@ -108,6 +108,5 @@ remove_filter( 'hook_name', 'callback_function', priority );
 
 ## Finding Hooks
 
-- WordPress Codex: https://codex.wordpress.org/Plugin_API/Hooks
 - WordPress Developer Reference: https://developer.wordpress.org/reference/hooks/
-- Use `grep` to search WordPress core files
+- Use repository search (`rg`) and official docs

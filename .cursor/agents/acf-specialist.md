@@ -27,6 +27,7 @@ Help with:
 1. Child theme: `wp-content/themes/child-theme/acf-json/`
 2. Parent theme: `wp-content/themes/wp-theme/acf-json/`
 3. Fallback: `wp-content/acf-json/`
+4. Custom paths via ACF `save_json`/`load_json` settings and filters
 
 ### JSON Structure
 Ensure proper structure:

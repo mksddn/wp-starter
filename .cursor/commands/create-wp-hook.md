@@ -4,7 +4,7 @@ description: Create a WordPress hook (add_action or add_filter) with proper nami
 
 Create a WordPress hook following these rules:
 
-1. **Always use named functions** - Never use anonymous functions for hooks
+1. **Prefer named functions** - Especially for hooks that may need removal later
 2. **Function naming**: Hook callback function should have descriptive name with prefix
 3. **Hook priority**: Default priority is 10, adjust if needed
 4. **Hook arguments**: Check WordPress documentation for number of arguments

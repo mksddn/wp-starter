@@ -8,6 +8,7 @@ Enqueue scripts and styles following WordPress standards:
 2. **Dependencies**: Declare WordPress dependencies (jquery, etc.)
 3. **Versioning**: Use theme version or file modification time
 4. **Conditional loading**: Load only where needed (admin/frontend)
+5. **Data passing**: Use `wp_add_inline_script()` for arbitrary JS data; keep `wp_localize_script()` for translations
 
 **Enqueue styles:**
 ```php
@@ -46,14 +47,16 @@ function prefix_enqueue_scripts() {
         true // In footer
     );
     
-    // Localize script for passing PHP data to JS
-    wp_localize_script(
+    // Pass runtime data to JavaScript.
+    wp_add_inline_script(
         'theme-script',
-        'themeData',
-        array(
-            'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-            'nonce'   => wp_create_nonce( 'theme-nonce' ),
-        )
+        'const themeData = ' . wp_json_encode(
+            array(
+                'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+                'nonce'   => wp_create_nonce( 'theme-nonce' ),
+            )
+        ) . ';',
+        'before'
     );
 }
 
@@ -69,4 +72,4 @@ add_action( 'admin_enqueue_scripts', 'prefix_admin_assets' );
 - Always use `get_template_directory_uri()` or `get_stylesheet_directory_uri()`
 - For child theme: use `get_stylesheet_directory_uri()`
 - Never hardcode URLs
-- Use `wp_localize_script()` to pass PHP data to JavaScript securely
+- Use `wp_set_script_translations()` + `wp_localize_script()` for i18n strings when needed

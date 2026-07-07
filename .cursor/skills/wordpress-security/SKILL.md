@@ -25,9 +25,9 @@ Always escape output before displaying:
 - `esc_attr()` - HTML attributes
 - `esc_url()` - URLs
 - `esc_js()` - JavaScript strings
-- `esc_sql()` - SQL queries (use $wpdb->prepare() instead)
 - `esc_textarea()` - Textarea content
 - `wp_kses_post()` - Safe HTML output
+- Prefer context-specific escaping at output point; do not treat `esc_sql()` as query protection
 
 ### 3. Database Queries
 - **Never use direct SQL** - Use WordPress functions or $wpdb->prepare()
@@ -50,6 +50,7 @@ $wpdb->get_results( $wpdb->prepare(
 Use nonces for all forms and AJAX requests:
 - `wp_create_nonce( 'action-name' )` - Create nonce
 - `wp_verify_nonce( $_POST['nonce'], 'action-name' )` - Verify nonce
+- `check_ajax_referer( 'action-name', 'nonce' )` - Verify nonce in AJAX handlers
 - Always check nonces in AJAX callbacks
 
 ### 5. Capability Checks

@@ -4,6 +4,8 @@ description: Create WordPress AJAX handler with proper security and structure
 
 Create a WordPress AJAX handler following security best practices:
 
+For new features, prefer REST API endpoints. Use admin-ajax handlers for legacy integrations or cases where REST is not suitable.
+
 ## AJAX Handler Structure
 
 ### 1. Enqueue Script with Localization
@@ -24,14 +26,16 @@ function prefix_enqueue_ajax_script() {
         true
     );
     
-    wp_localize_script(
+    wp_add_inline_script(
         'ajax-handler',
-        'ajaxData',
-        array(
-            'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-            'nonce'   => wp_create_nonce( 'ajax-nonce' ),
-            'action'  => 'prefix_ajax_action',
-        )
+        'const ajaxData = ' . wp_json_encode(
+            array(
+                'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+                'nonce'   => wp_create_nonce( 'ajax-nonce' ),
+                'action'  => 'prefix_ajax_action',
+            )
+        ) . ';',
+        'before'
     );
 }
 
@@ -48,11 +52,8 @@ add_action( 'wp_enqueue_scripts', 'prefix_enqueue_ajax_script' );
  * @package wp-theme
  */
 function prefix_ajax_handler_logged_in() {
-    // Verify nonce
-    if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'ajax-nonce' ) ) {
-        wp_send_json_error( array( 'message' => 'Invalid nonce' ) );
-        return;
-    }
+    // Verify nonce (returns 403/400 and exits on failure).
+    check_ajax_referer( 'ajax-nonce', 'nonce' );
     
     // Check user is logged in
     if ( ! is_user_logged_in() ) {
@@ -86,11 +87,8 @@ add_action( 'wp_ajax_prefix_ajax_action', 'prefix_ajax_handler_logged_in' );
  * @package wp-theme
  */
 function prefix_ajax_handler_public() {
-    // Verify nonce
-    if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'ajax-nonce' ) ) {
-        wp_send_json_error( array( 'message' => 'Invalid nonce' ) );
-        return;
-    }
+    // Verify nonce (returns 403/400 and exits on failure).
+    check_ajax_referer( 'ajax-nonce', 'nonce' );
     
     // Get and sanitize data
     $data = isset( $_POST['data'] ) ? sanitize_text_field( $_POST['data'] ) : '';
@@ -154,3 +152,4 @@ jQuery(document).ready(function($) {
 3. **Sanitize inputs** - All POST/GET data must be sanitized
 4. **Use wp_send_json_*** - Don't use `echo json_encode()`
 5. **Check capabilities** - If action requires specific permissions
+6. **Prefer REST for new work** - Keep AJAX for legacy compatibility

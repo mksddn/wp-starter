@@ -11,12 +11,14 @@ This project uses ACF Local JSON for version control of field groups.
 
 ### JSON File Locations
 
-ACF JSON files are stored in:
+ACF JSON files are usually stored in:
 1. Child theme: `wp-content/themes/child-theme/acf-json/`
 2. Parent theme: `wp-content/themes/wp-theme/acf-json/`
 3. Fallback: `wp-content/acf-json/`
 
 Priority: Child theme → Parent theme → Fallback
+
+Note: paths can be overridden via ACF settings/filters (`save_json`, `load_json`).
 
 ### Modified Timestamp
 
@@ -111,7 +113,7 @@ update_field( 'field_name', $value, 'option' );
 ### ACF in REST API
 
 To expose ACF fields in REST API:
-- Set `show_in_rest` to `true` in field group settings
+- Set `show_in_rest` to `true` in field/field group settings where available
 - Or use filter: `acf/rest_api/field_settings/show_in_rest`
 
 ### Best Practices

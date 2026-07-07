@@ -20,7 +20,7 @@ Run a security audit on WordPress code following this checklist:
 - [ ] JavaScript strings use `esc_js()`
 
 ### 3. Database Security
-- [ ] No direct SQL queries (use WordPress functions)
+- [ ] Prefer WordPress data APIs over raw SQL
 - [ ] All `$wpdb` queries use `$wpdb->prepare()`
 - [ ] No string concatenation in SQL
 - [ ] Table names use `$wpdb->prefix`
@@ -28,7 +28,7 @@ Run a security audit on WordPress code following this checklist:
 ### 4. Authentication & Authorization
 - [ ] Forms include nonces (`wp_create_nonce()`)
 - [ ] Nonces verified (`wp_verify_nonce()`)
-- [ ] AJAX requests verify nonces
+- [ ] AJAX requests verify nonces (`check_ajax_referer()` when applicable)
 - [ ] Capability checks before sensitive operations
 - [ ] REST endpoints have `permission_callback`
 

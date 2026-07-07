@@ -18,9 +18,9 @@ Review code for:
 ## WordPress Standards Checklist
 
 ### Code Structure
-- [ ] Procedural code only (no classes, namespaces)
+- [ ] Project architecture respected (procedural-first by default)
 - [ ] Functions use unique prefixes
-- [ ] No anonymous functions for hooks
+- [ ] Named hook callbacks preferred where removal may be needed
 - [ ] Proper file organization
 
 ### Naming Conventions
@@ -46,8 +46,7 @@ Review code for:
 ### WordPress Best Practices
 - [ ] Uses WordPress functions instead of PHP native
 - [ ] Checks function existence before use
-- [ ] Type hints used where appropriate
-- [ ] Return type declarations used
+- [ ] Type declarations are consistent with project compatibility requirements
 - [ ] ABSPATH check present
 
 ### Code Quality
@@ -59,7 +58,7 @@ Review code for:
 
 ## Common Issues to Check
 
-1. **OOP Usage**: Classes, namespaces, constructors
+1. **Architecture mismatch**: Pattern differs from project style without explicit request
 2. **Anonymous Functions**: In hooks (should be named)
 3. **Array Syntax**: Using `[]` instead of `array()`
 4. **Spacing**: Missing spaces around operators

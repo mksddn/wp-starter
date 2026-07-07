@@ -11,12 +11,12 @@ Follow WordPress PHP Coding Standards: https://developer.wordpress.org/coding-st
 
 ### Key Rules
 
-1. **No OOP** - Use procedural code only (functions, hooks, globals)
-2. **No namespaces** - WordPress doesn't use namespaces
-3. **No classes** - Use functions instead
-4. **Indentation** - Use tabs (not spaces)
-5. **Line length** - Keep under 80 characters when possible
-6. **Naming** - Use lowercase with underscores (snake_case)
+1. **Project architecture** - This project is procedural-first (functions/hooks), unless explicitly requested otherwise
+2. **WordPress compatibility** - Follow WordPress APIs and coding standards
+3. **Indentation** - Use tabs (not spaces) in PHP
+4. **Line length** - Keep under 80 characters when possible
+5. **Naming** - Use lowercase with underscores (snake_case) for functions/variables
+6. **Arrays** - Use `array()` syntax to match WPCS expectations
 
 ### Function Naming
 
@@ -162,8 +162,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 1. **Use WordPress functions** - Prefer WP functions over PHP native
 2. **Check function existence** - Use `function_exists()` for optional functions
-3. **Type hints** - Use type hints in function parameters when possible
-4. **Return types** - Use return type declarations (`: void`, `: string`, etc.)
+3. **Type declarations** - Allowed when project compatibility and style permit
+4. **Closures** - Allowed for local callbacks, but avoid for hooks that may need removal
 5. **Early returns** - Use early returns to reduce nesting
 6. **No closing PHP tag** - Omit `?>` at end of PHP-only files
 

@@ -40,7 +40,7 @@ For every code review, check:
 
 ### Authentication & Authorization
 - [ ] Nonces used for all forms
-- [ ] Nonces verified in AJAX callbacks
+- [ ] Nonces verified in AJAX callbacks (`check_ajax_referer()` where applicable)
 - [ ] Capability checks before sensitive operations
 - [ ] REST endpoints have permission_callbacks
 

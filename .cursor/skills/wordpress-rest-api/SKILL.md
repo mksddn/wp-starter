@@ -31,9 +31,13 @@ function prefix_register_rest_routes() {
         array(               // Options
             'methods'             => WP_REST_Server::READABLE,
             'callback'            => 'callback_function',
-            'permission_callback' => '__return_true',
+            'permission_callback' => 'prefix_rest_permissions',
         )
     );
+}
+
+function prefix_rest_permissions() {
+    return current_user_can( 'read' );
 }
 ```
 
@@ -54,23 +58,31 @@ function prefix_register_rest_routes() {
 
 **Logged in users:**
 ```php
-'permission_callback' => function() {
-    return is_user_logged_in();
-},
+'permission_callback' => 'prefix_can_access_endpoint',
 ```
 
 **Admin only:**
 ```php
-'permission_callback' => function() {
-    return current_user_can( 'manage_options' );
-},
+'permission_callback' => 'prefix_can_manage_options',
 ```
 
 **Custom capability:**
 ```php
-'permission_callback' => function() {
+'permission_callback' => 'prefix_can_edit_posts',
+```
+
+```php
+function prefix_can_access_endpoint() {
+    return is_user_logged_in();
+}
+
+function prefix_can_manage_options() {
+    return current_user_can( 'manage_options' );
+}
+
+function prefix_can_edit_posts() {
     return current_user_can( 'edit_posts' );
-},
+}
 ```
 
 ### Request Parameters
@@ -82,18 +94,24 @@ Define and validate parameters:
     'id' => array(
         'required'          => true,
         'sanitize_callback' => 'absint',
-        'validate_callback' => function( $param ) {
-            return is_numeric( $param ) && $param > 0;
-        },
+        'validate_callback' => 'prefix_validate_positive_numeric',
     ),
     'title' => array(
         'required'          => false,
         'sanitize_callback' => 'sanitize_text_field',
-        'validate_callback' => function( $param ) {
-            return is_string( $param ) && strlen( $param ) <= 100;
-        },
+        'validate_callback' => 'prefix_validate_short_string',
     ),
 ),
+```
+
+```php
+function prefix_validate_positive_numeric( $param ) {
+    return is_numeric( $param ) && $param > 0;
+}
+
+function prefix_validate_short_string( $param ) {
+    return is_string( $param ) && strlen( $param ) <= 100;
+}
 ```
 
 ### Callback Function
@@ -180,12 +198,13 @@ Define response schema for better documentation:
 ### Best Practices
 
 1. **Always implement permission_callback** - Never leave it empty
-2. **Sanitize all inputs** - Use sanitize_callback and validate_callback
-3. **Validate data** - Check types, ranges, formats
-4. **Return proper errors** - Use WP_Error with appropriate status codes
-5. **Use namespaces** - Prefix with theme/plugin name
-6. **Version endpoints** - Use version numbers (v1, v2)
-7. **Document endpoints** - Add schema and descriptions
+2. **Public access intentionally** - Use `__return_true` only for truly public routes
+3. **Sanitize all inputs** - Use sanitize_callback and validate_callback
+4. **Validate data** - Check types, ranges, formats
+5. **Return proper errors** - Use WP_Error with appropriate status codes
+6. **Use route namespace** - Prefix routes with theme/plugin slug
+7. **Version endpoints** - Use version numbers (v1, v2)
+8. **Document endpoints** - Add schema and descriptions
 
 ### Testing Endpoints
 
