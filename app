@@ -307,7 +307,9 @@ elif [ "$1" == "debug-off" ]; then
 elif [ "$1" == "clean" ]; then
     $DOCKER_COMPOSE down
     rm -rf .srv wp-content/plugins wp-content/uploads wp-content/upgrade wp-content/ai1wm-backups
-    rm -rf wp-content/index.php wp-content/themes/index.php wp-content/themes/twenty*
+    rm -rf wp-content/languages wp-content/updraft wp-content/cache wp-content/wflogs
+    rm -rf wp-content/index.php wp-content/db.php wp-content/object-cache.php wp-content/advanced-cache.php wp-content/debug.log
+    rm -rf wp-content/themes/index.php wp-content/themes/twenty*
     rm -rf wp-content/themes/$THEME_DIRECTORY/{composer.lock,vendor,package-lock.json,node_modules}
     rm -rf {composer.lock,vendor,package-lock.json,node_modules}
     rm -rf dbdump.sql
