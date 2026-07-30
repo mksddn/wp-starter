@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# Pre-push hook для проверки кода линтерами
+# Автоматически исправляет код перед проверкой
+# Блокирует push, если есть ошибки линтинга
+
+set -e
+
+# Переходим в корень проекта
+cd "$(git rev-parse --show-toplevel)"
+
+echo "🔍 Running linters before push..."
+
+# Проверяем наличие composer
+if ! command -v composer &> /dev/null; then
+    echo "❌ Error: composer is not installed"
+    exit 1
+fi
+
+# Проверяем наличие vendor директории
+if [ ! -d "vendor" ]; then
+    echo "❌ Error: vendor directory not found. Run 'composer install' first"
+    exit 1
+fi
+
+# Проверяем наличие необходимых бинарников
+if [ ! -f "vendor/bin/phpcs" ] || [ ! -f "vendor/bin/psalm" ] || [ ! -f "vendor/bin/rector" ]; then
+    echo "❌ Error: Linter binaries not found. Run 'composer install' first"
+    exit 1
+fi
+
+# Сохраняем состояние git перед исправлениями
+GIT_STATUS_BEFORE=$(git status --porcelain)
+
+# Автоматически исправляем код
+echo "🔧 Auto-fixing code issues..."
+if composer fix > /dev/null 2>&1; then
+    # Проверяем, были ли изменения после исправления
+    GIT_STATUS_AFTER=$(git status --porcelain)
+    
+    if [ "$GIT_STATUS_BEFORE" != "$GIT_STATUS_AFTER" ]; then
+        echo "✨ Code was auto-fixed. Please review and commit changes:"
+        git status --short
+        echo ""
+        echo "💡 Run: git add . && git commit -m 'Auto-fix code style'"
+        echo "⚠️  Push blocked until fixes are committed."
+        exit 1
+    fi
+else
+    echo "⚠️  Auto-fix completed with warnings (continuing checks...)"
+fi
+
+# Запускаем линтеры для финальной проверки
+echo "📋 Running PHPCS..."
+if ! composer lint:phpcs; then
+    echo "❌ PHPCS found errors. Push blocked."
+    echo "💡 Some issues cannot be auto-fixed. Please fix manually."
+    exit 1
+fi
+
+echo "📋 Running Psalm..."
+if ! composer lint:psalm; then
+    echo "❌ Psalm found errors. Push blocked."
+    exit 1
+fi
+
+echo "📋 Running Rector..."
+if ! composer lint:rector; then
+    echo "❌ Rector found issues. Push blocked."
+    echo "💡 Run 'composer fix' to auto-fix issues"
+    exit 1
+fi
+
+# Проверяем наличие npm для HTML валидации
+if command -v npm &> /dev/null && [ -f "package.json" ]; then
+    echo "📋 Running HTML validation..."
+    if ! npm run lint:htmlvalidate 2>/dev/null; then
+        echo "⚠️  HTML validation found issues (non-blocking)"
+    fi
+fi
+
+echo "✅ All linters passed. Proceeding with push..."
+exit 0
