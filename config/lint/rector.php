@@ -71,8 +71,12 @@ return static function (RectorConfig $rectorConfig): void {
         'get_site_url',
     ]);
 
-    // Отключаем правило преобразования @deprecated в атрибут, так как Psalm его не поддерживает
+    // Skip rules that conflict with WordPress style or break typed properties.
     $rectorConfig->skip([
         \Rector\Php84\Rector\Class_\DeprecatedAnnotationToDeprecatedAttributeRector::class,
+        // Prefer array() for WPCS consistency (LevelSetList pulls this in via php54).
+        \Rector\Php54\Rector\Array_\LongArrayToShortArrayRector::class,
+        // Typed nullable props need "= null" — otherwise first read throws Error.
+        \Rector\DeadCode\Rector\Property\RemoveDefaultValueFromAssignedPropertyRector::class,
     ]);
 }; 

@@ -40,7 +40,6 @@ function wp_theme_image_opt_supported_mimes(): array {
  * image_opt_quality is treated as the same flag for older saves.
  *
  * @since 1.3.0
- * @return bool
  */
 function wp_theme_is_image_upload_opt_enabled(): bool {
     $settings = wp_theme_get_settings();
@@ -190,8 +189,8 @@ function wp_theme_optimize_image_file(string $file_path, string $mime_type = '',
         return $error;
     }
 
-    $width         = (int) $image_size[0];
-    $height        = (int) $image_size[1];
+    $width         = $image_size[0];
+    $height        = $image_size[1];
     $max_dimension = max(1, (int) $args['max_dimension']);
     $needs_resize  = ! empty($args['allow_resize']) && max($width, $height) > $max_dimension;
     $needs_reencode = ! empty($args['allow_reencode']);
@@ -234,7 +233,7 @@ function wp_theme_optimize_image_file(string $file_path, string $mime_type = '',
         return $saved;
     }
 
-    $saved_path = isset($saved['path']) ? $saved['path'] : $temp_path;
+    $saved_path = $saved['path'] ?? $temp_path;
 
     if (! file_exists($saved_path)) {
         $error = new WP_Error('image_opt_save_missing', 'Optimized file was not written.');
@@ -277,7 +276,6 @@ function wp_theme_optimize_image_file(string $file_path, string $mime_type = '',
  *
  * @since 1.0.0
  * @param array $file Single $_FILES element.
- * @return array
  */
 function wp_theme_optimize_image_upload(array $file): array {
     if (! empty($file['error'])) {
@@ -316,7 +314,6 @@ function wp_theme_optimize_image_upload(array $file): array {
  * @since 1.3.0
  * @param array  $upload  Upload data (file, url, type).
  * @param string $context Upload context (upload|sideload).
- * @return array
  */
 function wp_theme_optimize_uploaded_file(array $upload, string $context = 'upload'): array {
     unset($context);
@@ -359,7 +356,6 @@ function wp_theme_remove_intermediate_sizes(): void {
  *
  * @since 1.0.0
  * @param array $sizes Intermediate sizes.
- * @return array
  */
 function wp_theme_filter_intermediate_sizes(array $sizes): array {
     $settings        = wp_theme_get_settings();
@@ -415,9 +411,8 @@ function wp_theme_fix_image_metadata($metadata, $attachment_id) {
  *
  * @since 1.0.0
  * @param int|false $threshold Current threshold.
- * @return int|false
  */
-function wp_theme_set_big_image_size_threshold($threshold) {
+function wp_theme_set_big_image_size_threshold($threshold): int {
     unset($threshold);
     $settings = wp_theme_get_settings();
     return (int) $settings['image_opt_max_dimension'];
@@ -433,7 +428,6 @@ function wp_theme_set_big_image_size_threshold($threshold) {
  * @since 1.3.0
  * @param array $metadata      Attachment metadata.
  * @param int   $attachment_id Attachment ID.
- * @return array
  */
 function wp_theme_maybe_delete_full_original(array $metadata, int $attachment_id): array {
     if (empty($metadata['original_image'])) {
@@ -468,7 +462,6 @@ function wp_theme_maybe_delete_full_original(array $metadata, int $attachment_id
  * @param array        $attr       Image attributes.
  * @param WP_Post      $attachment Attachment post.
  * @param string|int[] $_size      Requested size.
- * @return array
  */
 function wp_theme_add_priority_loading(array $attr, $attachment, $_size): array {
     unset($_size);
@@ -489,7 +482,6 @@ function wp_theme_add_priority_loading(array $attr, $attachment, $_size): array 
  * Set JPEG quality for better compression.
  *
  * @since 1.0.0
- * @return int
  */
 function wp_theme_set_jpeg_quality(): int {
     $settings = wp_theme_get_settings();
@@ -503,12 +495,11 @@ function wp_theme_set_jpeg_quality(): int {
  * @since 1.0.0
  * @param int    $quality   Default quality.
  * @param string $mime_type Mime type being saved.
- * @return int
  */
 function wp_theme_set_image_quality(int $quality = 82, string $mime_type = 'image/jpeg'): int {
     unset($quality);
     $resolved = wp_theme_get_image_opt_quality_for_mime($mime_type);
-    return null !== $resolved ? $resolved : (int) wp_theme_get_settings()['image_opt_quality_value'];
+    return $resolved ?? (int) wp_theme_get_settings()['image_opt_quality_value'];
 }
 
 
@@ -519,7 +510,6 @@ function wp_theme_set_image_quality(int $quality = 82, string $mime_type = 'imag
  * @param int          $attachment_id Attachment ID.
  * @param string|int[] $size          Image size.
  * @param array        $attr          Extra attributes.
- * @return string
  */
 function wp_theme_get_responsive_image($attachment_id, $size = 'large', $attr = []): string {
     $image = wp_get_attachment_image_src($attachment_id, $size);
@@ -565,7 +555,6 @@ function wp_theme_get_responsive_image($attachment_id, $size = 'large', $attr = 
  *
  * @since 1.3.0
  * @param int $attachment_id Attachment ID.
- * @return bool
  */
 function wp_theme_attachment_needs_reoptimize(int $attachment_id): bool {
     $settings      = wp_theme_get_settings();
@@ -586,7 +575,7 @@ function wp_theme_attachment_needs_reoptimize(int $attachment_id): bool {
     $file = get_attached_file($attachment_id);
     if ($file && file_exists($file)) {
         $size = @getimagesize($file);
-        if ($size && max((int) $size[0], (int) $size[1]) > $max_dimension) {
+        if ($size && max($size[0], $size[1]) > $max_dimension) {
             return true;
         }
     }
@@ -725,11 +714,12 @@ function wp_theme_reoptimize_existing_images(int $limit = 50): array {
     foreach ($ids as $attachment_id) {
         ++$result['processed'];
         $optimized = wp_theme_reoptimize_attachment($attachment_id);
-        if (is_wp_error($optimized)) {
+        if ($optimized instanceof WP_Error) {
             ++$result['failed'];
             $result['errors'][ $attachment_id ] = $optimized->get_error_message();
             continue;
         }
+
         ++$result['success'];
     }
 
@@ -797,7 +787,7 @@ function wp_theme_reoptimize_admin_notice(): void {
 
     printf(
         '<div class="notice notice-%1$s is-dismissible"><p>%2$s</p></div>',
-        ! empty($result['failed']) ? 'warning' : 'success',
+        empty($result['failed']) ? 'success' : 'warning',
         esc_html($message)
     );
 }
@@ -859,7 +849,7 @@ function wp_theme_cli_optimize_images(array $args = array(), array $assoc_args =
 
     $limit   = isset($assoc_args['limit']) ? (int) $assoc_args['limit'] : 50;
     $dry_run = isset($assoc_args['dry-run']);
-    $ids     = wp_theme_get_reoptimize_candidate_ids($limit > 0 ? $limit : 0);
+    $ids     = wp_theme_get_reoptimize_candidate_ids(max($limit, 0));
 
     WP_CLI::log(sprintf('Found %d candidate attachment(s).', count($ids)));
 
@@ -867,6 +857,7 @@ function wp_theme_cli_optimize_images(array $args = array(), array $assoc_args =
         foreach ($ids as $id) {
             WP_CLI::log('Would optimize attachment #' . $id);
         }
+
         WP_CLI::success('Dry run complete.');
         return;
     }
@@ -880,7 +871,7 @@ function wp_theme_cli_optimize_images(array $args = array(), array $assoc_args =
     foreach ($ids as $attachment_id) {
         ++$result['processed'];
         $optimized = wp_theme_reoptimize_attachment($attachment_id);
-        if (is_wp_error($optimized)) {
+        if ($optimized instanceof WP_Error) {
             ++$result['failed'];
             WP_CLI::warning(
                 sprintf(
@@ -891,6 +882,7 @@ function wp_theme_cli_optimize_images(array $args = array(), array $assoc_args =
             );
             continue;
         }
+
         ++$result['success'];
         WP_CLI::log('Optimized attachment #' . $attachment_id);
     }
