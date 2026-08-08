@@ -84,6 +84,20 @@ wpcli() {
     $DOCKER_COMPOSE run --rm -e HOME=/tmp wpcli "$@"
 }
 
+# Wait until the WordPress entrypoint creates wp-config.php.
+wait_for_wordpress_files() {
+    local retries=0
+
+    until [ -f ".srv/wordpress/wp-config.php" ]; do
+        retries=$((retries + 1))
+        if [ "$retries" -eq 30 ]; then
+            echo "WordPress files were not initialized after 30 seconds."
+            exit 1
+        fi
+        sleep 1
+    done
+}
+
 # Read plugins list
 read_plugins() {
     local plugins=()
@@ -156,19 +170,24 @@ replace_urls_in_db() {
 
 # Start application
 if [ "$1" == "up" ]; then
-    $DOCKER_COMPOSE up -d
+    if ! $DOCKER_COMPOSE up -d; then
+        echo "Failed to start Docker services."
+        exit 1
+    fi
 
     echo "Checking WordPress..."
+    wait_for_wordpress_files
     # First-ever core install: turn on plugins.txt only; later runs never mass-activate.
     FRESH_WP_INSTALL=0
-    if ! wpcli core is-installed 2>/dev/null; then
+    if ! wpcli core is-installed --url="$SITE_URL" 2>/dev/null; then
         FRESH_WP_INSTALL=1
         retries=0
         until wpcli core install \
             --url=$SITE_URL --title="$SITE_URL" \
-            --admin_user=$ADMIN_USER --admin_password=$ADMIN_PASSWORD --admin_email=$ADMIN_EMAIL; do
+            --admin_user=$ADMIN_USER --admin_password=$ADMIN_PASSWORD --admin_email=$ADMIN_EMAIL \
+            --skip-email; do
             retries=$((retries + 1))
-            echo "Couldn't connect to DB. Try - ${retries}. Retrying in 5 seconds..."
+            echo "Couldn't connect to DB. Try - ${retries}. Retrying in 3 seconds..."
             sleep 3
             if [ "$retries" -eq 30 ]; then
                 echo "Failed to connect to DB after 30 attempts. Exiting."
@@ -208,9 +227,9 @@ if [ "$1" == "up" ]; then
     
     # Set debug mode based on environment
     if [ "$ENVIRONMENT" == "production" ]; then
-        # Production mode: error logging only
-        wpcli config set WP_DEBUG true --raw
-        wpcli config set WP_DEBUG_LOG true --raw
+        # Production mode: disable debugging.
+        wpcli config set WP_DEBUG false --raw
+        wpcli config set WP_DEBUG_LOG false --raw
         wpcli config set WP_DEBUG_DISPLAY false --raw
         wpcli config set SCRIPT_DEBUG false --raw
     else
@@ -282,9 +301,9 @@ elif [ "$1" == "db-import" ]; then
 # Debug mode
 elif [ "$1" == "debug-on" ]; then
     if [ "$ENVIRONMENT" == "production" ]; then
-        # Production mode: error logging only
-        wpcli config set WP_DEBUG true --raw
-        wpcli config set WP_DEBUG_LOG true --raw
+        # Production mode: disable debugging.
+        wpcli config set WP_DEBUG false --raw
+        wpcli config set WP_DEBUG_LOG false --raw
         wpcli config set WP_DEBUG_DISPLAY false --raw
         wpcli config set SCRIPT_DEBUG false --raw
     else
