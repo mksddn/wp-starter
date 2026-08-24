@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# Pre-commit hook: run project linters before commit.
+# Enabled automatically by composer install / npm install.
+#
+
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+if [ -f composer.json ] && [ -f composer.lock ]; then
+    if ! command -v composer >/dev/null 2>&1; then
+        echo "Composer is required. Run: composer install" >&2
+        exit 1
+    fi
+
+    if [ ! -x vendor/bin/phpcs ]; then
+        echo "PHP dependencies are missing. Run: composer install" >&2
+        exit 1
+    fi
+
+    echo "→ PHP linters"
+    composer lint
+fi
+
+if [ -f package.json ] && [ -f package-lock.json ]; then
+    if ! command -v npm >/dev/null 2>&1; then
+        echo "npm is required. Run: npm ci" >&2
+        exit 1
+    fi
+
+    if [ ! -x node_modules/.bin/html-validate ]; then
+        echo "Node.js dependencies are missing. Run: npm ci" >&2
+        exit 1
+    fi
+
+    echo "→ HTML linter"
+    npm run lint:htmlvalidate
+fi
+
+echo "Pre-commit checks passed."

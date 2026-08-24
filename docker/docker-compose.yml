@@ -1,7 +1,7 @@
 name: ${REPOSITORY_NAME}
 services:
   wordpress:
-    image: wordpress:7.0.2-php8.3-apache
+    image: wordpress:7.0.2-php8.4-apache
     container_name: "${REPOSITORY_NAME}_wordpress"
     depends_on:
       mysql:
@@ -25,7 +25,7 @@ services:
         condition: service_healthy
       wordpress:
         condition: service_started
-    image: wordpress:cli-2.12.0-php8.3
+    image: wordpress:cli-2.12.0-php8.4
     container_name: "${REPOSITORY_NAME}_wpcli"
     entrypoint: wp
     command: "--info"

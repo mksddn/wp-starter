@@ -37,10 +37,10 @@ function child_theme_get_hot_reload_port(): string {
 
 
 /**
- * Enqueue hot reload client script in development mode.
+ * Enqueue hot reload client script only when explicitly enabled in wp-config.php.
  */
 function child_theme_hot_reload_client(): void {
-    if (! defined( 'WP_DEBUG' ) || ! WP_DEBUG) {
+    if (! defined( 'CHILD_THEME_HOT_RELOAD' ) || ! CHILD_THEME_HOT_RELOAD) {
         return;
     }
 

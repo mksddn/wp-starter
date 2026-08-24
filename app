@@ -329,9 +329,15 @@ elif [ "$1" == "clean" ]; then
     rm -rf wp-content/languages wp-content/updraft wp-content/cache wp-content/wflogs
     rm -rf wp-content/index.php wp-content/db.php wp-content/object-cache.php wp-content/advanced-cache.php wp-content/debug.log
     rm -rf wp-content/themes/index.php wp-content/themes/twenty*
-    rm -rf wp-content/themes/$THEME_DIRECTORY/{composer.lock,vendor,package-lock.json,node_modules}
-    rm -rf {composer.lock,vendor,package-lock.json,node_modules}
+    rm -rf wp-content/themes/$THEME_DIRECTORY/{vendor,node_modules}
+    rm -rf {vendor,node_modules}
     rm -rf dbdump.sql
+    exit
+
+# Seed content fields with placeholder values (dev tool)
+elif [ "$1" == "seed-content" ]; then
+    shift
+    wpcli theme seed-content "$@"
     exit
 
 # Hot reload development server
@@ -351,6 +357,12 @@ elif [ "$1" == "hot-reload" ]; then
     # Get site URL for display
     LOCAL_IP=$(get_local_ip)
     SITE_URL="http://${LOCAL_IP}:${WORDPRESS_PORT}"
+    
+    ROOT_DIR=$(pwd)
+    
+    # Enable hot reload client injection only while this command runs
+    wpcli config set CHILD_THEME_HOT_RELOAD true --raw
+    trap 'cd "$ROOT_DIR" && wpcli config set CHILD_THEME_HOT_RELOAD false --raw' EXIT
     
     cd "$THEME_PATH" || exit 1
     

@@ -11,7 +11,14 @@
     "lint:phpcs": "phpcs --standard=config/lint/phpcs.xml --extensions=php --ignore=vendor --error-severity=1 --warning-severity=0 wp-content/themes",
     "lint:psalm": "psalm --config=config/lint/psalm.xml --no-cache --threads=1",
     "lint:rector": "vendor/bin/rector process --dry-run --config=config/lint/rector.php",
-    "fix": "phpcbf --standard=config/lint/phpcs.xml --extensions=php --ignore=vendor wp-content/themes && vendor/bin/rector process --config=config/lint/rector.php"
+    "fix": "phpcbf --standard=config/lint/phpcs.xml --extensions=php --ignore=vendor wp-content/themes && vendor/bin/rector process --config=config/lint/rector.php",
+    "install-git-hooks": "bash config/lint/install-git-hooks.sh",
+    "post-install-cmd": [
+      "@install-git-hooks"
+    ],
+    "post-update-cmd": [
+      "@install-git-hooks"
+    ]
   },
   "config": {
     "platform": {
