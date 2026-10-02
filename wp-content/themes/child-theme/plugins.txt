@@ -2,4 +2,3 @@ secure-custom-fields
 mksddn-forms-handler
 mksddn-collection-for-postman
 mksddn-migrate-content
-query-monitor

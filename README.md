@@ -92,6 +92,7 @@ npm run lint:htmlvalidate             # проверить HTML-фрагмент
 
 - **Веди работу только в дочерней теме**, так как после обновления родительской темы все изменения в ней сбросятся.
 - Не размещай важный код в **wp-config.php**, так как этот файл в каждой среде свой. Рабочей является только директория **/wp-content/** с темой.
+- Тип среды WordPress берётся из константы `WP_ENVIRONMENT_TYPE`. Без константы ядро считает сайт production. В Docker `./app up` записывает тип из `ENVIRONMENT` в `.env` (пустое значение → development). На сервере можно задать `define( 'WP_ENVIRONMENT_TYPE', 'staging' );` или `'development'`. Допустимы только значения ядра: `production`, `staging`, `development`, `local` — не `dev`.
 - Не храни дамп БД в репозитории - Git для кода, а не для контента.
 - Для переноса контента или всего сайта используй плагин [MksDdn Migrate Content](https://wordpress.org/plugins/mksddn-migrate-content/)
 - Панель phpMyAdmin доступна по [http://localhost:8080](http://localhost:8080) (или http://LAN_IP:8080 с мобильного в той же сети)

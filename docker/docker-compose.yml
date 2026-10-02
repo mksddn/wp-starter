@@ -1,7 +1,7 @@
 name: ${REPOSITORY_NAME}
 services:
   wordpress:
-    image: wordpress:7.0.2-php8.4-apache
+    image: wordpress:7.0.2-php8.3-apache
     container_name: "${REPOSITORY_NAME}_wordpress"
     depends_on:
       mysql:
@@ -13,11 +13,37 @@ services:
       WORDPRESS_DB_USER: ${DB_USER}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
       WORDPRESS_DB_NAME: ${DB_NAME}
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'DISABLE_WP_CRON', true );
     volumes:
       - ../.srv/wordpress/:/var/www/html
       - ../.srv/log/:/var/log
       - ../wp-content:/var/www/html/wp-content
       - ./custom.ini:/usr/local/etc/php/conf.d/custom.ini
+
+  wpcron:
+    image: wordpress:cli-2.12.0-php8.3
+    container_name: "${REPOSITORY_NAME}_wpcron"
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      wordpress:
+        condition: service_started
+    environment:
+      WORDPRESS_DB_HOST: ${DB_HOST}:${DB_PORT}
+      WORDPRESS_DB_USER: ${DB_USER}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${DB_NAME}
+    volumes:
+      - ../.srv/wordpress/:/var/www/html
+      - ../.srv/log/:/var/log
+      - ../wp-content:/var/www/html/wp-content
+      - ./custom.ini:/usr/local/etc/php/conf.d/custom.ini
+    entrypoint:
+      - /bin/sh
+      - -c
+      - while true; do wp cron event run --due-now || true; sleep 10; done
 
   wpcli:
     depends_on:
@@ -25,7 +51,7 @@ services:
         condition: service_healthy
       wordpress:
         condition: service_started
-    image: wordpress:cli-2.12.0-php8.4
+    image: wordpress:cli-2.12.0-php8.3
     container_name: "${REPOSITORY_NAME}_wpcli"
     entrypoint: wp
     command: "--info"

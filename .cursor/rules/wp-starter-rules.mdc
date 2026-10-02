@@ -17,3 +17,5 @@ alwaysApply: true
   - Архитектура проекта: procedural-first (функции + хуки). Отклоняться от этого правила только по явному запросу.
   - Логи находятся здесь: `.srv/log/apache2/`.
   - При любом изменении ACF JSON (`acf-json/*.json`) обновлять поле `modified` текущим Unix timestamp (`date +%s`).
+  - Не править `wp-plugins` без явной просьбы.
+  - URL экрана wp-admin брать из регистрации: `add_options_page` → `options-general.php`, `add_theme_page` → `themes.php`, `add_submenu_page` — из первого аргумента (`null` → `admin.php`). Не угадывать файл по слагу и не копировать запасной редирект. Настройки темы: `options-general.php?page=wp-theme-settings`.

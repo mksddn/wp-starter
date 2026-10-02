@@ -1,12 +1,14 @@
 {
   "engines": {
-    "node": ">=18.19 <21"
+    "node": "18.x"
   },
   "devDependencies": {
     "html-validate": "^9.7.1"
   },
   "scripts": {
     "postinstall": "bash config/lint/install-git-hooks.sh",
+    "lint:check-env": "node -e \"const v=process.versions.node.split('.'); if (v[0] !== '18') { console.error('Node.js 18.x required for lint parity with CI (node:18.20.8). Found: ' + process.version); process.exit(1); }\"",
+    "prelint:htmlvalidate": "npm run lint:check-env",
     "lint:htmlvalidate": "node config/lint/validate-html-fragments.js",
     "lint:htmlvalidate-cli": "html-validate 'wp-content/themes/wp-theme/**/*.php' 'wp-content/mu-plugins/**/*.php'"
   }

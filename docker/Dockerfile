@@ -1,4 +1,4 @@
-FROM wordpress:php8.4-fpm-alpine
+FROM wordpress:php8.3-fpm-alpine
 
 ARG ADMIN_USER
 ARG ADMIN_PASSWORD

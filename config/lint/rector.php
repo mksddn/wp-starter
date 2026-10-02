@@ -21,9 +21,9 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // Включаем базовые наборы правил
-    $rectorConfig->phpVersion(80400); // PHP 8.4 (синхронизировано с GitLab CI)
+    $rectorConfig->phpVersion(80300); // PHP 8.3 (synced with production and GitLab CI)
     $rectorConfig->sets([
-        LevelSetList::UP_TO_PHP_84,
+        LevelSetList::UP_TO_PHP_83,
         SetList::CODE_QUALITY,
         SetList::DEAD_CODE,
         SetList::TYPE_DECLARATION,

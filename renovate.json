@@ -1,0 +1,49 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on monday"]
+  },
+  "packageRules": [
+    {
+      "description": "Group PHP linters",
+      "matchManagers": ["composer"],
+      "matchPackageNames": [
+        "squizlabs/php_codesniffer",
+        "wp-coding-standards/wpcs",
+        "vimeo/psalm",
+        "rector/rector",
+        "php-stubs/wordpress-stubs"
+      ],
+      "groupName": "php linters"
+    },
+    {
+      "description": "Group Node linters",
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "node linters"
+    },
+    {
+      "description": "Pin Docker images in CI and docker-compose",
+      "matchManagers": ["dockerfile", "docker-compose", "custom.regex"],
+      "matchFileNames": [
+        ".gitlab-ci.yml",
+        "docker/**"
+      ],
+      "pinDigests": false
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.gitlab-ci\\.yml$/"],
+      "matchStrings": [
+        "image:\\s*(?<depName>[^\\s@]+):(?<currentValue>[^\\s@]+)"
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ]
+}

@@ -67,9 +67,52 @@ if [ ! -f .env ]; then
     fi
 fi
 
-# Import variables from .env (strip \r for Windows CRLF)
+# Import variables from .env (strip \r for Windows CRLF).
+# Supports quoted values with # inside; strips only unquoted trailing comments.
 if [ -f .env ]; then
-    export $(cat .env | grep -v '#' | awk '/=/ {print $1}' | tr -d '\r')
+    while IFS= read -r line || [ -n "$line" ]; do
+        line=$(printf '%s' "$line" | tr -d '\r')
+        line="${line#"${line%%[![:space:]]*}"}"
+        line="${line%"${line##*[![:space:]]}"}"
+        [ -z "$line" ] && continue
+        case "$line" in
+            \#*) continue ;;
+        esac
+        case "$line" in
+            *=*)
+                key="${line%%=*}"
+                value="${line#*=}"
+                key="${key%"${key##*[![:space:]]}"}"
+                key="${key#"${key%%[![:space:]]*}"}"
+                value="${value#"${value%%[![:space:]]*}"}"
+
+                case "$value" in
+                    \"*)
+                        value="${value#\"}"
+                        case "$value" in
+                            *\"*)
+                                value="${value%%\"*}"
+                                ;;
+                        esac
+                        ;;
+                    \'*)
+                        value="${value#\'}"
+                        case "$value" in
+                            *\'*)
+                                value="${value%%\'*}"
+                                ;;
+                        esac
+                        ;;
+                    *)
+                        value="${value%%#*}"
+                        value="${value%"${value##*[![:space:]]}"}"
+                        ;;
+                esac
+
+                export "${key}=${value}"
+                ;;
+        esac
+    done < .env
 else
     echo ".env file not found. Please create one."
     exit 1
@@ -82,6 +125,78 @@ SITE_URL="http://${LOCAL_IP}:${WORDPRESS_PORT}"
 # WP-CLI call via function
 wpcli() {
     $DOCKER_COMPOSE run --rm -e HOME=/tmp wpcli "$@"
+}
+
+# Map .env ENVIRONMENT to an official WP_ENVIRONMENT_TYPE and debug flags.
+resolve_wp_environment() {
+    local raw
+    raw=$(printf '%s' "${ENVIRONMENT:-}" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')
+
+    WP_ENV_TYPE="development"
+    WP_DEBUG_ENABLED="true"
+    WP_DEBUG_DISPLAY_ENABLED="true"
+
+    case "$raw" in
+        production|prod)
+            WP_ENV_TYPE="production"
+            WP_DEBUG_ENABLED="false"
+            WP_DEBUG_DISPLAY_ENABLED="false"
+            ;;
+        staging|stage)
+            WP_ENV_TYPE="staging"
+            WP_DEBUG_ENABLED="true"
+            # Staging often has real data / public URL — log errors, do not show them to visitors.
+            WP_DEBUG_DISPLAY_ENABLED="false"
+            ;;
+        development|dev)
+            WP_ENV_TYPE="development"
+            WP_DEBUG_ENABLED="true"
+            WP_DEBUG_DISPLAY_ENABLED="true"
+            ;;
+        local)
+            WP_ENV_TYPE="local"
+            WP_DEBUG_ENABLED="true"
+            WP_DEBUG_DISPLAY_ENABLED="true"
+            ;;
+        '')
+            WP_ENV_TYPE="development"
+            WP_DEBUG_ENABLED="true"
+            WP_DEBUG_DISPLAY_ENABLED="true"
+            ;;
+        *)
+            WP_ENV_TYPE="development"
+            WP_DEBUG_ENABLED="true"
+            WP_DEBUG_DISPLAY_ENABLED="true"
+            echo "Warning: ENVIRONMENT='${ENVIRONMENT}' is not recognized; using WP_ENVIRONMENT_TYPE=development."
+            ;;
+    esac
+}
+
+# Write WP_DEBUG* flags from the ENVIRONMENT map (does not change WP_ENVIRONMENT_TYPE).
+apply_wp_debug_flags() {
+    resolve_wp_environment
+
+    if [ "$WP_DEBUG_ENABLED" = "true" ]; then
+        wpcli config set WP_DEBUG true --raw
+        wpcli config set WP_DEBUG_LOG true --raw
+        wpcli config set SCRIPT_DEBUG true --raw
+    else
+        wpcli config set WP_DEBUG false --raw
+        wpcli config set WP_DEBUG_LOG false --raw
+        wpcli config set SCRIPT_DEBUG false --raw
+    fi
+
+    if [ "$WP_DEBUG_DISPLAY_ENABLED" = "true" ]; then
+        wpcli config set WP_DEBUG_DISPLAY true --raw
+    else
+        wpcli config set WP_DEBUG_DISPLAY false --raw
+    fi
+}
+
+# Write WP_ENVIRONMENT_TYPE and WP_DEBUG* from the same ENVIRONMENT map.
+apply_wp_environment_and_debug() {
+    apply_wp_debug_flags
+    wpcli config set WP_ENVIRONMENT_TYPE "$WP_ENV_TYPE"
 }
 
 # Wait until the WordPress entrypoint creates wp-config.php.
@@ -225,20 +340,8 @@ if [ "$1" == "up" ]; then
         fi
     done
     
-    # Set debug mode based on environment
-    if [ "$ENVIRONMENT" == "production" ]; then
-        # Production mode: disable debugging.
-        wpcli config set WP_DEBUG false --raw
-        wpcli config set WP_DEBUG_LOG false --raw
-        wpcli config set WP_DEBUG_DISPLAY false --raw
-        wpcli config set SCRIPT_DEBUG false --raw
-    else
-        # Development mode: show all errors and enable script debugging
-        wpcli config set WP_DEBUG true --raw
-        wpcli config set WP_DEBUG_LOG true --raw
-        wpcli config set WP_DEBUG_DISPLAY true --raw
-        wpcli config set SCRIPT_DEBUG true --raw
-    fi
+    # Set environment type and debug flags from ENVIRONMENT.
+    apply_wp_environment_and_debug
     
     # Ensure URLs are updated one more time before opening browser
     current_home=$(wpcli option get home 2>/dev/null || echo "")
@@ -300,19 +403,8 @@ elif [ "$1" == "db-import" ]; then
 
 # Debug mode
 elif [ "$1" == "debug-on" ]; then
-    if [ "$ENVIRONMENT" == "production" ]; then
-        # Production mode: disable debugging.
-        wpcli config set WP_DEBUG false --raw
-        wpcli config set WP_DEBUG_LOG false --raw
-        wpcli config set WP_DEBUG_DISPLAY false --raw
-        wpcli config set SCRIPT_DEBUG false --raw
-    else
-        # Development mode: show all errors and enable script debugging
-        wpcli config set WP_DEBUG true --raw
-        wpcli config set WP_DEBUG_LOG true --raw
-        wpcli config set WP_DEBUG_DISPLAY true --raw
-        wpcli config set SCRIPT_DEBUG true --raw
-    fi
+    # Only debug flags — do not overwrite WP_ENVIRONMENT_TYPE.
+    apply_wp_debug_flags
     exit
 elif [ "$1" == "debug-off" ]; then
     # Disable all debugging regardless of environment
@@ -325,7 +417,11 @@ elif [ "$1" == "debug-off" ]; then
 # Cleanup
 elif [ "$1" == "clean" ]; then
     $DOCKER_COMPOSE down
-    rm -rf .srv wp-content/plugins wp-content/uploads wp-content/upgrade wp-content/ai1wm-backups
+    rm -rf .srv wp-content/plugins wp-content/upgrade wp-content/ai1wm-backups
+    # Keep uploads/.htaccess (blocks PHP execution); wipe generated media.
+    if [ -d wp-content/uploads ]; then
+        find wp-content/uploads -mindepth 1 -maxdepth 1 ! -name '.htaccess' -exec rm -rf {} +
+    fi
     rm -rf wp-content/languages wp-content/updraft wp-content/cache wp-content/wflogs
     rm -rf wp-content/index.php wp-content/db.php wp-content/object-cache.php wp-content/advanced-cache.php wp-content/debug.log
     rm -rf wp-content/themes/index.php wp-content/themes/twenty*

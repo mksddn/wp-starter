@@ -5,7 +5,9 @@ deploy.sh
 backup-db
 wp-content/*
 !wp-content/mu-plugins
-# !wp-content/uploads
+!wp-content/uploads/
+wp-content/uploads/*
+!wp-content/uploads/.htaccess
 !wp-content/themes/
 wp-content/themes/index.php
 wp-content/themes/twentytwentyone

@@ -4,14 +4,38 @@
     "wp-coding-standards/wpcs": "^3.0",
     "vimeo/psalm": "^6.0",
     "rector/rector": "^2.1",
-    "php-stubs/wordpress-stubs": "^6.4"
+    "php-stubs/wordpress-stubs": "^6.4",
+    "phpunit/phpunit": "^9.6",
+    "brain/monkey": "^2.6",
+    "wp-phpunit/wp-phpunit": "7.0.2",
+    "yoast/phpunit-polyfills": "^3.0"
   },
   "scripts": {
-    "lint": "composer lint:phpcs && composer lint:psalm && composer lint:rector",
+    "test": [
+      "@test:unit",
+      "@test:integration"
+    ],
+    "test:unit": "phpunit -c phpunit.unit.xml.dist",
+    "test:integration": [
+      "@test:install-wp",
+      "phpunit -c phpunit.integration.xml.dist"
+    ],
+    "test:install-wp": "bash bin/prepare-wp-tests.sh",
+    "lint:check-env": "@php -r \"if (PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION !== '8.3') { fwrite(STDERR, 'PHP 8.3 required for lint parity with CI (php:8.3.33-cli). Found: '.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION.PHP_EOL); exit(1); }\"",
+    "lint": [
+      "@lint:check-env",
+      "@lint:phpcs",
+      "@lint:psalm",
+      "@lint:rector"
+    ],
     "lint:phpcs": "phpcs --standard=config/lint/phpcs.xml --extensions=php --ignore=vendor --error-severity=1 --warning-severity=0 wp-content/themes",
     "lint:psalm": "psalm --config=config/lint/psalm.xml --no-cache --threads=1",
     "lint:rector": "vendor/bin/rector process --dry-run --config=config/lint/rector.php",
-    "fix": "phpcbf --standard=config/lint/phpcs.xml --extensions=php --ignore=vendor wp-content/themes && vendor/bin/rector process --config=config/lint/rector.php",
+    "fix": [
+      "@lint:check-env",
+      "phpcbf --standard=config/lint/phpcs.xml --extensions=php --ignore=vendor wp-content/themes",
+      "vendor/bin/rector process --config=config/lint/rector.php"
+    ],
     "install-git-hooks": "bash config/lint/install-git-hooks.sh",
     "post-install-cmd": [
       "@install-git-hooks"
@@ -22,10 +46,15 @@
   },
   "config": {
     "platform": {
-      "php": "8.4"
+      "php": "8.3"
     },
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "WPTheme\\Tests\\": "tests/"
     }
   }
 }
